@@ -946,7 +946,7 @@ public function info() {
                         }
                     }
                 }
-
+                $weight = $this->model_sale_order->getProductWeight($product['product_id']);
                 $data['products'][] = array(
                     'order_product_id' => $product['order_product_id'],
                     'product_id'       => $product['product_id'],
@@ -955,7 +955,7 @@ public function info() {
                     'option'   		   => $option_data,
                     'optionV'   	   => $product_options,
                     'quantity'		   => $product['quantity'],
-                    "weight"     => $this->model_sale_order->getProductWeight($product['product_id']),
+                    "weight"           => $weight,
                     'stock_quantity'   => $this->model_sale_order->getProductStockQuantity($product['product_id']),
                     'price'    		   => $this->currency->format($product['price'] + ($this->config->get('config_tax') ? $product['tax'] : 0), $order_info['currency_code'], $order_info['currency_value']),
                     'total'    		   => $this->currency->format($product['total'] + ($this->config->get('config_tax') ? ($product['tax'] * $product['quantity']) : 0), $order_info['currency_code'], $order_info['currency_value']),
