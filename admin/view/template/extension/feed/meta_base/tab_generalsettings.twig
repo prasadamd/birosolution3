@@ -1,0 +1,126 @@
+<div class="form-group">
+	<label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+	<div class="col-sm-10">
+		<label class="switch">
+			<input type="checkbox" id="input-status" class="success" name="feed_metabase_status" {% if feed_metabase_status %} checked="checked" {% endif %}>
+			<span class="slider round"></span>
+		</label>
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label" for="input-currency">{{ entry_currency }}</label>
+	<div class="col-sm-3">
+		<select name="feed_metabase_currency" id="input-currency" class="form-control">
+			{% for currency in currencies %}
+				{% if currency.code == feed_metabase_currency %}
+					<option value="{{ currency.code }}" selected="selected">{{ currency.title }}</option>
+				{% else %}
+					<option value="{{ currency.code }}">{{ currency.title }}</option>
+				{% endif %}
+			{% endfor %}
+		</select>
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label" for="input-language">{{ entry_language }}</label>
+	<div class="col-sm-3">
+		<select name="feed_metabase_language" id="input-language" class="form-control">
+			{% for language in languages %}
+				{% if language.language_id == feed_metabase_language %}
+					<option value="{{ language.language_id }}" selected="selected">{{ language.name }}</option>
+				{% else %}
+					<option value="{{ language.language_id }}">{{ language.name }}</option>
+				{% endif %}
+			{% endfor %}
+		</select>
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label" for="input-gtin">
+		<span data-toggle="tooltip" title="{{ help_gtin }}">{{ entry_gtin }}</span>
+	</label>
+	<div class="col-sm-3">
+		<select name="feed_metabase_gtin" id="input-gtin" class="form-control">
+			{% for key,value in gtins %}
+				{% if value == feed_metabase_gtin %}
+					<option value="{{ value }}" selected="selected">{{ key }}</option>
+				{% else %}
+					<option value="{{ value }}">{{ key }}</option>
+				{% endif %}
+			{% endfor %}
+		</select>
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label" for="input-additional-image">{{ entry_additional_image }}</label>
+	<div class="col-sm-10">
+		<label class="switch">
+			<input type="checkbox" id="input-additional-image" class="success" name="feed_metabase_additional_image" {% if feed_metabase_additional_image %} checked="checked" {% endif %}>
+			<span class="slider round"></span>
+		</label>
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label" for="input-category">{{ entry_category }}
+	</label>
+	<div class="col-sm-10">
+		<div class="well well-sm checkbox-category" style="height: 150px; width:50%; overflow: auto;">
+			{% for category in categories %}
+				<div class="checkbox">
+					<label>
+						{% if category.category_id in feed_metabase_category %}
+							<input type="checkbox" name="feed_metabase_category[]" value="{{ category.category_id }}" checked="checked"/>
+							{{ category.name }}
+						{% else %}
+							<input type="checkbox" name="feed_metabase_category[]" value="{{ category.category_id }}"/>
+							{{ category.name }}
+						{% endif %}
+					</label>
+				</div>
+			{% endfor %}
+		</div>
+		<button type="button" class="selectall btn btn-sm btn-primary" data-checked='false' data-container="checkbox-category" data-select="{{ text_select_all }}" data-deselect="{{ text_select_none }}">{{ text_select_all }}</button>
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label" for="input-manufacturer">{{ entry_manufacturer }}
+	</label>
+	<div class="col-sm-10">
+		<div class="well well-sm manufacturer-checkbox" style="height: 150px; width:50%; overflow: auto;">
+			{% for manufacturer in manufacturers %}
+				<div class="checkbox">
+					<label>
+						{% if manufacturer.manufacturer_id in feed_metabase_manufacturer %}
+							<input type="checkbox" name="feed_metabase_manufacturer[]" value="{{ manufacturer.manufacturer_id }}" checked="checked"/>
+							{{ manufacturer.name }}
+						{% else %}
+							<input type="checkbox" name="feed_metabase_manufacturer[]" value="{{ manufacturer.manufacturer_id }}"/>
+							{{ manufacturer.name }}
+						{% endif %}
+					</label>
+				</div>
+			{% endfor %}
+		</div>
+		<button type="button" class="selectall btn btn-sm btn-primary" data-checked='false' data-container="manufacturer-checkbox" data-select="{{ text_select_all }}" data-deselect="{{ text_select_none }}">{{ text_select_all }}</button>
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label" for="input-feed">{{ entry_feed }}</label>
+	<div class="col-sm-10">
+		<div class="input-group">
+			<span class="input-group-btn">
+				<button class="btn btn-success btn-copy" type="button" data-id="1" data-text="{{ text_copy }}">
+					<i class="fa fa-clipboard" aria-hidden="true"></i>
+				</button>
+			</span>
+			<input type="text" class="form-control" readonly id="input-feed-url-1" value="{{ feed_metabase_url }}"/>
+		</div>
+	</div>
+</div>
