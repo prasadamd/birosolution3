@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 class ModelSaleOrder extends Model {
 	public function getOrder($order_id) {
 		$order_query = $this->db->query("SELECT *, (SELECT CONCAT(c.firstname, ' ', c.lastname) FROM " . DB_PREFIX . "customer c WHERE c.customer_id = o.customer_id) AS customer, (SELECT os.name FROM " . DB_PREFIX . "order_status os WHERE os.order_status_id = o.order_status_id AND os.language_id = '" . (int)$this->config->get('config_language_id') . "') AS order_status FROM `" . DB_PREFIX . "order` o WHERE o.order_id = '" . (int)$order_id . "'");
@@ -300,6 +300,16 @@ public function getProductStockQuantity($product_id) {
 	}
 
 
+	//Metoda pemtru a extrage pe baza la product id greutatea produsului
+    public function getProductWeight($product_id) {
+        $query = $this->db->query("SELECT weight FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$product_id . "'");
+
+        if ($query->num_rows) {
+            return $query->row['weight'];
+        } else {
+            return 0; // sau returnează o valoare implicită dacă greutatea nu este găsită
+        }
+    }
 
 
 
