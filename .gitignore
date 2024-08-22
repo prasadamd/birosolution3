@@ -5,3 +5,4 @@ config.php
 .htaccess.txt
 index.php
 php.ini
+/storage/
