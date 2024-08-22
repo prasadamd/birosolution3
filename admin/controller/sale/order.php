@@ -523,7 +523,7 @@ class ControllerSaleOrder extends Controller {
                     'model'      => $product['model'],
                     'option'     => $this->model_sale_order->getOrderOptions($this->request->get['order_id'], $product['order_product_id']),
                     'quantity'   => $product['quantity'],
-                    "weight"     => $this->model_catalog_product->getProductWeight($product['product_id']),//A fost adaugat greutatea
+                    "weight"     => $this->model_sale_order->getProductWeight($product['product_id']),//A fost adaugat greutatea
                     'price'      => $product['price'],
                     'total'      => $product['total'],
                     'reward'     => $product['reward']
@@ -955,7 +955,7 @@ public function info() {
                     'option'   		   => $option_data,
                     'optionV'   	   => $product_options,
                     'quantity'		   => $product['quantity'],
-                    "weight"     => $this->model_catalog_product->getProductWeight($product['product_id']),
+                    "weight"     => $this->model_sale_order->getProductWeight($product['product_id']),
                     'stock_quantity'   => $this->model_sale_order->getProductStockQuantity($product['product_id']),
                     'price'    		   => $this->currency->format($product['price'] + ($this->config->get('config_tax') ? $product['tax'] : 0), $order_info['currency_code'], $order_info['currency_value']),
                     'total'    		   => $this->currency->format($product['total'] + ($this->config->get('config_tax') ? ($product['tax'] * $product['quantity']) : 0), $order_info['currency_code'], $order_info['currency_value']),
