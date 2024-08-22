@@ -246,11 +246,11 @@
           {% for product in products %}
             <tr>
               <td>{{ product.name }}</td>
-              <td>{{ product.weight|number_format(2, '.', '') }}</td>
-              <td>{{ product.price_|number_format(2, '.', '') }}</td>
-              <td>{{ (product.price_ - product.weight)|number_format(2, '.', '') }}</td>
+              <td>{{ product.weight * product.quantity|number_format(2, '.', '') }}</td>
+              <td>{{ product.price_ * product.quantity|number_format(2, '.', '') }}</td>
+              <td>{{ ((product.price_ * product.quantity) -(product.weight * product.quantity|number_format) )|number_format(2, '.', '') }}</td>
             </tr>
-            {% set total_profit = total_profit + (product.price_ - product.weight) %}
+            {% set total_profit = total_profit + ((product.price_ * product.quantity) -(product.weight * product.quantity|number_format) ) %}
           {% endfor %}
           </tbody>
           <tfoot>
