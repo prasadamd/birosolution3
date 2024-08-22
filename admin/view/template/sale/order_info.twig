@@ -175,7 +175,7 @@
           
               </td>
             <td class="text-left">{{ product.model }} </td>
-            <td class="text-right">{{ product.quantity }} Greutate :{{ product.weight }} </td>
+            <td class="text-right">{{ product.quantity }} </td>
       <td class="text-right">
           
     {% set showTotalStock = true %}
@@ -231,6 +231,36 @@
             </tbody>
           
         </table>
+
+        <table class="table table-bordered">
+          <thead>
+          <tr>
+            <td>Produs</td>
+            <td>Preț Cumpărare</td>
+            <td>Preț Vânzare</td>
+            <td>Profit</td>
+          </tr>
+          </thead>
+          <tbody>
+          {% set total_profit = 0 %}
+          {% for product in products %}
+            <tr>
+              <td>{{ product.name }}</td>
+              <td>{{ product.weight|number_format(2, '.', '') }}</td>
+              <td>{{ product.price_|number_format(2, '.', '') }}</td>
+              <td>{{ (product.price_ - product.weight)|number_format(2, '.', '') }}</td>
+            </tr>
+            {% set total_profit = total_profit + (product.price_ - product.weight) %}
+          {% endfor %}
+          </tbody>
+          <tfoot>
+          <tr>
+            <td colspan="3"><b>Total Profit</b></td>
+            <td><b>{{ total_profit|number_format(2, '.', '') }}</b></td>
+
+          </tr>
+          </tfoot>
+        </table>
         {% if comment %}
         <table class="table table-bordered">
           <thead>
@@ -245,6 +275,8 @@
           </tbody>
         </table>
         {% endif %} </div>
+
+
     </div>
     <div class="panel panel-default">
       <div class="panel-heading">
