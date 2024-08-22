@@ -236,6 +236,7 @@
           <thead>
           <tr>
             <td>Produs</td>
+            <td>Preț Unitate</td>
             <td>Preț Cumpărare</td>
             <td>Preț Vânzare</td>
             <td>Profit</td>
@@ -246,6 +247,7 @@
           {% for product in products %}
             <tr>
               <td>{{ product.name }}</td>
+              <td>{{ product.weight |number_format(2, '.', '') }}</td>
               <td>{{ product.weight * product.quantity|number_format(2, '.', '') }}</td>
               <td>{{ product.price_ * product.quantity|number_format(2, '.', '') }}</td>
               <td>{{ ((product.price_ * product.quantity) -(product.weight * product.quantity|number_format) )|number_format(2, '.', '') }}</td>
