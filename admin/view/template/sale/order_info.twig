@@ -246,27 +246,30 @@
           </thead>
           <tbody>
           {% set total_profit = 0 %}
+          {% set total_cumparare = 0 %}
+          {% set total_vanzare = 0 %}
           {% for product in products %}
             <tr>
               <td>{{ product.name }}</td>
-              <td>{{ product.weight |number_format(2, '.', '') }}</td>
-              <td>{{ product.price_ |number_format(2, '.', '') }}</td>
+              <td>{{ product.weight | number_format(2, '.', '') }}</td>
+              <td>{{ product.price_ | number_format(2, '.', '') }}</td>
               <td>{{ product.quantity }}</td>
-              <td>{{ product.weight * product.quantity|number_format(2, '.', '') }}</td>
-              <td>{{ product.price_ * product.quantity|number_format(2, '.', '') }}</td>
-              <td>{{ ((product.price_ * product.quantity) -(product.weight * product.quantity|number_format) )|number_format(2, '.', '') }}</td>
+              <td>{{ (product.weight * product.quantity) | number_format(2, '.', '') }}</td>
+              <td>{{ (product.price_ * product.quantity) | number_format(2, '.', '') }}</td>
+              <td>{{ ((product.price_ * product.quantity) - (product.weight * product.quantity)) | number_format(2, '.', '') }}</td>
             </tr>
-            {% set total_profit = total_profit + ((product.price_ * product.quantity) -(product.weight * product.quantity|number_format) ) %}
+            {% set total_profit = total_profit + ((product.price_ * product.quantity) - (product.weight * product.quantity)) %}
+            {% set total_cumparare = total_cumparare + (product.weight * product.quantity) %}
+            {% set total_vanzare = total_vanzare + (product.price_ * product.quantity) %}
           {% endfor %}
           </tbody>
           <tfoot>
           <tr>
             <td colspan="3"><b>Total Profit</b></td>
             <td></td>
-            <td></td>
-            <td></td>
-            <td><b>{{ total_profit|number_format(2, '.', '') }}</b></td>
-
+            <td><b>{{ total_cumparare | number_format(2, '.', '') }}</b></td>
+            <td><b>{{ total_vanzare | number_format(2, '.', '') }}</b></td>
+            <td><b>{{ total_profit | number_format(2, '.', '') }}</b></td>
           </tr>
           </tfoot>
         </table>
