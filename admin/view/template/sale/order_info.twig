@@ -246,6 +246,8 @@
           </thead>
           <tbody>
           {% set total_profit = 0 %}
+          {% set total_cumparare = 0 %}
+          {% set total_vanzare = 0 %}
           {% for product in products %}
             <tr>
               <td>{{ product.name }}</td>
