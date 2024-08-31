@@ -335,12 +335,11 @@ class ControllerCatalogProduct extends Controller {
 
 		$this->load->model('tool/image');
 
-
 		$product_total = $this->model_catalog_product->getTotalProducts($filter_data);
 
 		$results = $this->model_catalog_product->getProducts($filter_data);
 
-foreach ($results as $result) {
+		foreach ($results as $result) {
 			if (is_file(DIR_IMAGE . $result['image'])) {
 				$image = $this->model_tool_image->resize($result['image'], 40, 40);
 			} else {
@@ -348,14 +347,8 @@ foreach ($results as $result) {
 			}
 
 			$special = false;
-			 $product_id = $result['product_id'];
-
 
 			$product_specials = $this->model_catalog_product->getProductSpecials($result['product_id']);
-        	$product_options = $this->model_catalog_product->getProductOptions($product_id);
-  
-  
-  
 
 			foreach ($product_specials  as $product_special) {
 				if (($product_special['date_start'] == '0000-00-00' || strtotime($product_special['date_start']) < time()) && ($product_special['date_end'] == '0000-00-00' || strtotime($product_special['date_end']) > time())) {
@@ -374,8 +367,7 @@ foreach ($results as $result) {
 				'special'    => $special,
 				'quantity'   => $result['quantity'],
 				'status'     => $result['status'] ? $this->language->get('text_enabled') : $this->language->get('text_disabled'),
-				'edit'       => $this->url->link('catalog/product/edit', 'user_token=' . $this->session->data['user_token'] . '&product_id=' . $result['product_id'] . $url, true),
-				'options'    => $product_options // Add this line to include the options
+				'edit'       => $this->url->link('catalog/product/edit', 'user_token=' . $this->session->data['user_token'] . '&product_id=' . $result['product_id'] . $url, true)
 			);
 		}
 
@@ -770,13 +762,6 @@ foreach ($results as $result) {
 		} else {
 			$data['sort_order'] = 1;
 		}
-			if ($product_info['quantity'] <= 0) {
-				$data['stock'] = $product_info['stock_status'];
-			} elseif ($this->config->get('config_stock_display')) {
-				$data['stock'] = $product_info['quantity'];
-			} else {
-				$data['stock'] = $this->language->get('text_instock');
-			}
 
 		$this->load->model('localisation/stock_status');
 

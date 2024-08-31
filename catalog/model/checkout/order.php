@@ -291,10 +291,7 @@ class ModelCheckoutOrder extends Model {
 							$fraud_status_id = $this->{'model_extension_fraud_' . $extension['code']}->check($order_info);
 	
 							if ($fraud_status_id) {
-							    //Se ofera aici order status 0 
-								// $order_status_id = $fraud_status_id; 
-								//Ca solutie modificam fraud_status_id in 1;
-								$order_status_id =1;
+								$order_status_id = $fraud_status_id;
 							}
 						}
 					}
