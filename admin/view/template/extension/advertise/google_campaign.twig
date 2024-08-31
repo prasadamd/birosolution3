@@ -538,7 +538,7 @@
         });
     };
 
-    var campaignCreateTestPromise = new Promise((resolve, reject) => {
+    {# var campaignCreateTestPromise = new Promise((resolve, reject) => {
         {% if can_edit_campaigns %}
             resolve();
         {% else %}
@@ -560,7 +560,7 @@
 
             doCampaignCreateTest();
         {% endif %}
-    });
+    }); #}
 
     $(document).on('click', selector.target.add, function(e) {
         e.preventDefault();
@@ -572,7 +572,7 @@
             campaign_name : '',
             budget: '25.00',
             roas: 0,
-            roas_status: false,
+            roas_status: true,
             roas_warning: '{{ text_roas_warning }}',
             country: '',
             status: 'active',
@@ -634,7 +634,7 @@
 
             $(selector.target.container).html('<div class="alert alert-info text-center">{{ text_loading_please_wait }}</div>');
 
-            campaignCreateTestPromise.then(function() {
+            {# campaignCreateTestPromise.then(function() { #}
                 $.ajax({
                     url: '{{ target_delete }}'.replace(/{target_id}/, target_id),
                     type: 'GET',
@@ -655,7 +655,7 @@
                         }
                     }
                 });
-            });
+            {# }); #}
         }
     });
 
@@ -695,7 +695,7 @@
 
         $('.has-error').removeClass('has-error');
 
-        campaignCreateTestPromise.then(function() {
+        {# campaignCreateTestPromise.then(function() { #}
             $.ajax({
                 url: $(saveButton).attr('data-url'),
                 type: 'POST',
@@ -745,7 +745,7 @@
                     }
                 }
             });
-        });
+        {# }); #}
     });
 
     $(document).on('change', selector.target.country, function() {
@@ -796,9 +796,9 @@
         $(selector.save).text('{{ text_loading_please_wait }}').attr('disabled', true);
         $(selector.acknowledge).attr('disabled', true);
 
-        campaignCreateTestPromise.then(function() {
+        {# campaignCreateTestPromise.then(function() { #}
             $(selector.form).submit();
-        });
+        {# }); #}
     });
 })(jQuery);
 </script>
