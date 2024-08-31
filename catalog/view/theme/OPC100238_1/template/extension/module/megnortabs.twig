@@ -1,0 +1,359 @@
+<div class="hometab box">
+<div class="container">
+	<div class="row">
+	<div class="tab-head">
+	<div class="hometab-heading box-heading">{{heading_title}}</div>
+<div id="tabs" class="htabs">
+  <ul class='etabs'>
+	<li class='tab'>
+		{% if latestproducts %}
+			<a href="#tab-latest">{{ tab_latest }}</a>
+		{% endif %}
+	</li>
+	<li class='tab'>
+		{% if bestsellersproducts %}
+		<a href="#tab-bestseller">{{ tab_bestseller }}</a>
+		{% endif %}
+	</li>	
+	<li class='tab'>
+		{% if specialproducts %}
+			<a href="#tab-special">{{ tab_special }}</a>
+		{% endif %}
+	</li>
+	</ul>
+
+ </div>
+</div>
+<div class="product-column">
+{% if bestsellersproducts %}
+ <div id="tab-bestseller" class="tab-content">
+    	  <div class="box">
+				<div class="box-content">
+					{% set sliderFor = 10 %}
+					{%	set productCount = bestsellersproducts|length %}
+					
+					{% if productCount >= sliderFor %}
+						<div class="customNavigation">
+							<a class="fa prev fa-arrow-left">&nbsp;</a>
+							<a class="fa next fa-arrow-right">&nbsp;</a>
+						</div>	
+					{% endif %}
+					<div class="box-product {% if productCount >= sliderFor %}product-carousel{% else %} productbox-grid-hometab{% endif %}" id="{% if productCount >= sliderFor %}tabbestseller-carousel{% else %}tabbestseller-grid{% endif %}">
+						{% for product in bestsellersproducts %}
+							<div class="{% if productCount >= sliderFor %}slider-item{% else %}product-items{% endif %}">
+								<div class="product-block product-thumb transition">
+									<div class="product-block-inner">	  	
+										<div class="image {% if product.qty == 0 %}outstock{% endif %}">
+											{% if product.thumb_swap %}
+      												<a href="{{ product.href }}">
+      												<img src="{{ product.thumb }}" title="{{ product.name }}" alt="{{ product.name }}" class="img-responsive reg-image"/>
+      												<div class="image_content">
+      												<img class="img-responsive hover-image" src="{{ product.thumb_swap }}" title="{{ product.name }}" alt="{{ product.name }}"/></div>
+      												</a>
+      												{% else %}
+      												<a href="{{ product.href }}">
+      												<img src="{{ product.thumb }}" title="{{ product.name }}" alt="{{ product.name }}" class="img-responsive"/></a>
+      										{% endif %}
+      										{% if product.special %}
+											<span class="special-tag">{{product.percentsaving}}%</span>
+										{% endif %}
+										{% if product.qty == 0 %}
+							            	<span class="stock_status">{{text_outstock}}</span>
+							            {% endif %}
+										</div>
+											<div class="product-details">
+											<div class="caption">
+														
+												{# <p class="desc"><?php echo $product['description']; ?></p> #}
+												<span class="product-brand">{{product.brand}}</span>
+												<h4><a href="{{ product.href }} ">{{ product.name }} </a></h4>
+												{% if product.rating %}
+													 <div class="rating">
+													 {% for i in 1..5 %}
+													 {% if product.rating < i %}
+													 <span class="fa fa-stack"><i class="fa fa-star off fa-stack-2x"></i></span>
+													 {% else %}
+													 <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span>
+													 {% endif %}
+													 {% endfor %}
+											&nbsp;<span style="cursor:pointer;" class="total-review{{ product.product_id }}">{{product.review}} Review</span>
+													 </div>
+												{% endif %}
+												{% if product.price %}
+													<p class="price">
+													{% if not product.special %}
+													{{ product.price }}
+													{% else %}
+													<span class="price-new">{{ product.special }}</span> <span class="price-old">{{ product.price }}</span>
+													{% endif %}
+													{% if product.tax %}
+													<span class="price-tax">{{ text_tax }} {{ product.tax }}</span>
+													{% endif %}
+													</p>
+												{% endif %}
+												
+												<div class="product_hover_block">
+												  <div class="action">
+													{% if product.qty > 0 %}
+													 <button type="button" class="cart_button" onclick="cart.add('{{ product.product_id }}');" title="{{ button_cart }}" ></button>
+													 {% endif %}
+													 <div class="quickview-button">
+													 <a class="quickbox"  title="{{ button_quickview }}" href="{{ product.quick }}"></a>
+													 </div>
+													 <button class="wishlist" type="button"  title="{{ button_wishlist }} " onclick="wishlist.add('{{ product.product_id }} ');"></button>
+													 <button class="compare_button" type="button"  title="{{ button_compare }} " onclick="compare.add('{{ product.product_id }} ');"></button>
+												  </div>
+												</div>
+											</div>	
+										</div>
+									</div>
+								</div>
+
+								
+								
+								<script> 
+								     $('.total-review{{ product.product_id }}').on('click', function() { 
+								       var t='{{product.href}}'; 
+								       const parseResult = new DOMParser().parseFromString(t, "text/html");
+								       const parsedUrl = parseResult.documentElement.textContent;
+								       window.location.href = parsedUrl + '&review';
+								       return false;
+								    });
+								 </script>
+							</div>
+							
+							
+						{% endfor %}
+						
+					</div>
+				</div>
+			 </div>
+			 
+			 
+		
+		 <span class="tabbestseller_default_width" style="display:none; visibility:hidden"></span> 
+ </div>
+ 
+ 
+
+ 
+{% endif %}
+{% if latestproducts %}
+<div id="tab-latest" class="tab-content">
+	<div class="box">
+				<div class="box-content">
+
+					{% set sliderFor = 10 %}
+					{%	set productCount = latestproducts|length %}
+					
+						{% if productCount >= sliderFor %}
+						<div class="customNavigation">
+							<a class="fa prev fa-arrow-left">&nbsp;</a>
+							<a class="fa next fa-arrow-right">&nbsp;</a>
+						</div>	
+					{% endif %}
+					<div class="box-product {% if productCount >= sliderFor %}product-carousel{% else %} productbox-grid-hometab{% endif %}" id="{% if productCount >= sliderFor %}tablatest-carousel{% else %}tablatest-grid{% endif %}">
+					{% for product in latestproducts %}
+							<div class="{% if productCount >= sliderFor %}slider-item{% else %}product-items{% endif %}">
+								<div class="product-block product-thumb transition">
+									<div class="product-block-inner">	  	
+										<div class="image {% if product.qty == 0 %}outstock{% endif %}">
+											{% if product.thumb_swap %}
+      												<a href="{{ product.href }}">
+      												<img src="{{ product.thumb }}" title="{{ product.name }}" alt="{{ product.name }}" class="img-responsive reg-image"/>
+      												<div class="image_content">
+      												<img class="img-responsive hover-image" src="{{ product.thumb_swap }}" title="{{ product.name }}" alt="{{ product.name }}"/></div>
+      												</a>
+      												{% else %}
+      												<a href="{{ product.href }}">
+      												<img src="{{ product.thumb }}" title="{{ product.name }}" alt="{{ product.name }}" class="img-responsive"/></a>
+      										{% endif %}
+      										{% if product.special %}
+											<span class="special-tag">{{product.percentsaving}}%</span>
+										{% endif %}
+										{% if product.qty == 0 %}
+							            	<span class="stock_status">{{text_outstock}}</span>
+							            {% endif %}
+										</div>
+										<div class="product-details">
+											<div class="caption">
+														
+												{# <p class="desc"><?php echo $product['description']; ?></p> #}
+
+												<span class="product-brand">{{product.brand}}</span>
+												<h4><a href="{{ product.href }} ">{{ product.name }} </a></h4>
+												
+												{% if product.rating %}
+													 <div class="rating">
+													 {% for i in 1..5 %}
+													 {% if product.rating < i %}
+													 <span class="fa fa-stack"><i class="fa fa-star off fa-stack-2x"></i></span>
+													 {% else %}
+													 <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span>
+													 {% endif %}
+													 {% endfor %}
+													 &nbsp;<span style="cursor:pointer;" class="total-review{{ product.product_id }}">{{product.review}} Review</span>
+													 </div>
+												{% endif %}
+												{% if product.price %}
+													<p class="price">
+													{% if not product.special %}
+													{{ product.price }}
+													{% else %}
+													<span class="price-new">{{ product.special }}</span> <span class="price-old">{{ product.price }}</span>
+													{% endif %}
+													{% if product.tax %}
+													<span class="price-tax">{{ text_tax }} {{ product.tax }}</span>
+													{% endif %}
+													</p>
+												{% endif %}
+												<div class="product_hover_block">
+												  <div class="action">
+													{% if product.qty > 0 %}
+													 <button type="button" class="cart_button" onclick="cart.add('{{ product.product_id }}');" title="{{ button_cart }}" ></button>
+													 {% endif %}
+													 <div class="quickview-button">
+													<a class="quickbox"  title="{{ button_quickview }}" href="{{ product.quick }}"></a>
+													 </div>
+													 <button class="wishlist" type="button"  title="{{ button_wishlist }} " onclick="wishlist.add('{{ product.product_id }} ');"></button>
+													 <button class="compare_button" type="button"  title="{{ button_compare }} " onclick="compare.add('{{ product.product_id }} ');"></button>
+												  </div>
+												</div>
+											</div>	
+										</div>
+									</div>
+								</div>
+
+								<script> 
+								     $('.total-review{{ product.product_id }}').on('click', function() { 
+								       var t='{{product.href}}'; 
+								       const parseResult = new DOMParser().parseFromString(t, "text/html");
+								       const parsedUrl = parseResult.documentElement.textContent;
+								       window.location.href = parsedUrl + '&review';
+								       return false;
+								    });
+								 </script>
+							</div>
+						{% endfor %}
+					</div>
+				</div>
+				<script>
+    document.querySelectorAll('.img-responsive').forEach(function(img) {
+  img.onerror = function() {
+    this.style.display = 'none';
+  };
+});
+</script>
+			 </div>
+			  <span class="tablatest_default_width" style="display:none; visibility:hidden"></span>
+ </div>
+{% endif %}
+
+{% if specialproducts %}
+ <div id="tab-special" class="tab-content">
+    	 <div class="box">
+				<div class="box-content">
+					
+					{% set sliderFor = 10 %}
+					{%	set productCount = specialproducts|length %}
+					
+					{% if productCount >= sliderFor %}
+						<div class="customNavigation">
+							<a class="fa prev fa-arrow-left">&nbsp;</a>
+							<a class="fa next fa-arrow-right">&nbsp;</a>
+						</div>	
+					{% endif %}
+					
+					<div class="box-product {% if productCount >= sliderFor %}product-carousel{% else %} productbox-grid-hometab{% endif %}" id="{% if productCount >= sliderFor %}tabspecial-carousel{% else %}tabspecial-grid{% endif %}">
+					{% for product in specialproducts %}
+							<div class="{% if productCount >= sliderFor %}slider-item{% else %}product-items{% endif %}">
+								<div class="product-block product-thumb transition">
+									<div class="product-block-inner">	  	
+										<div class="image {% if product.qty == 0 %}outstock{% endif %}">
+											{% if product.thumb_swap %}
+											  <a href="{{ product.href }}">
+											  <img src="{{ product.thumb }}" title="{{ product.name }}" alt="{{ product.name }}" class="img-responsive reg-image"/>
+											  <div class="image_content">
+      											<img class="img-responsive hover-image" src="{{ product.thumb_swap }}" title="{{ product.name }}" alt="{{ product.name }}"/></div>
+											  </a>
+											  {% else %}
+											  <a href="{{ product.href }}">
+											  <img src="{{ product.thumb }}" title="{{ product.name }}" alt="{{ product.name }}" class="img-responsive"/></a>
+											  {% endif %}
+											  {% if product.special %}
+											<span class="special-tag">{{product.percentsaving}}%</span>
+										{% endif %}
+										{% if product.qty == 0 %}
+							            	<span class="stock_status">{{text_outstock}}</span>
+							            {% endif %}
+										</div>
+										<div class="product-details">
+											<div class="caption">
+														
+												{# <p class="desc"><?php echo $product['description']; ?></p> #}
+												<span class="product-brand">{{product.brand}}</span>
+												<h4><a href="{{ product.href }} ">{{ product.name }} </a></h4>
+												{% if product.rating %}
+													 <div class="rating">
+													 {% for i in 1..5 %}
+													 {% if product.rating < i %}
+													 <span class="fa fa-stack"><i class="fa fa-star off fa-stack-2x"></i></span>
+													 {% else %}
+													 <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span>
+													 {% endif %}
+													 {% endfor %}
+											&nbsp;<span style="cursor:pointer;" class="total-review{{ product.product_id }}">{{product.review}} Review</span>
+													 </div>
+												{% endif %}
+												{% if product.price %}
+													<p class="price">
+													{% if not product.special %}
+													{{ product.price }}
+													{% else %}
+													<span class="price-new">{{ product.special }}</span> <span class="price-old">{{ product.price }}</span>
+													{% endif %}
+													{% if product.tax %}
+													<span class="price-tax">{{ text_tax }} {{ product.tax }}</span>
+													{% endif %}
+													</p>
+												{% endif %}
+												<div class="product_hover_block">
+												  <div class="action">
+													 {% if product.qty > 0 %}
+													 <button type="button" class="cart_button" onclick="cart.add('{{ product.product_id }}');" title="{{ button_cart }}" ></button>
+													 {% endif %}
+													 <div class="quickview-button">
+													<a class="quickbox"  title="{{ button_quickview }}" href="{{ product.quick }}"></a>
+													 </div>
+													 <button class="wishlist" type="button"  title="{{ button_wishlist }} " onclick="wishlist.add('{{ product.product_id }} ');"></button>
+													 <button class="compare_button" type="button"  title="{{ button_compare }} " onclick="compare.add('{{ product.product_id }} ');"></button>
+												  </div>
+												</div>
+											</div>	
+										</div>
+									</div>
+								</div>
+								<script> 
+								     $('.total-review{{ product.product_id }}').on('click', function() { 
+								       var t='{{product.href}}'; 
+								       const parseResult = new DOMParser().parseFromString(t, "text/html");
+								       const parsedUrl = parseResult.documentElement.textContent;
+								       window.location.href = parsedUrl + '&review';
+								       return false;
+								    });
+								 </script>
+							</div>
+						{% endfor %}
+					</div>
+				</div>
+			 </div>
+		 <span class="tabspecial_default_width" style="display:none; visibility:hidden"></span> 
+ </div>
+{% endif %}
+</div>
+{{bannerfirst}}
+</div></div>
+</div>
+<script>
+$('#tabs a').tabs();
+</script> 
