@@ -269,6 +269,23 @@ $('input[name^=\'selected\']').on('change', function() {
 		}
 	}
 });
+$('input[name^=\'selected\']').on('change', function() {
+	$('#button-shipping, #button-invoiceMail').prop('disabled', true);
+
+	var selected = $('input[name^=\'selected\']:checked');
+
+	if (selected.length) {
+		$('#button-invoiceMail').prop('disabled', false);
+	}
+
+	for (i = 0; i < selected.length; i++) {
+		if ($(selected[i]).parent().find('input[name^=\'shipping_code\']').val()) {
+			$('#button-shipping').prop('disabled', false);
+
+			break;
+		}
+	}
+});
 
 $('#button-shipping, #button-invoice').prop('disabled', true);
 $('#button-shipping, #button-invoiceMail').prop('disabled', true);
