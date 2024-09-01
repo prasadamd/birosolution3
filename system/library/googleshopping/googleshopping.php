@@ -354,6 +354,13 @@ class Googleshopping extends Library {
                 }
             }
 
+            if (isset($row['weight']) && $row['weight'] != 0 && !empty($row['weight_class_id'])) {
+                $weight_class_details = $this->db->query("SELECT `unit` FROM `" . DB_PREFIX . "weight_class_description` WHERE `weight_class_id` = '" . (int)$row['weight_class_id'] . "'");
+                $weight_unit = !empty($weight_class_details->row['unit']) ? $weight_class_details->row['unit'] : false;
+            } else {
+                $weight_unit = false;
+            }
+
             $campaigns = array();
             $custom_label_0 = '';
             $custom_label_1 = '';
@@ -417,6 +424,13 @@ class Googleshopping extends Library {
                 'size_type' => !empty($row['size_type']) ? $row['size_type'] : '',
                 'title' => $this->sanitizeText($row['name'], 150)
             );
+            
+            if ($weight_unit) {
+                $base_row['weight'] = array(
+                    'unit' => $weight_unit,
+                    'value' => $row['weight']
+                );
+            }
 
             // Provide optional special price
             if ($special_price !== null) {
@@ -583,7 +597,7 @@ class Googleshopping extends Library {
         return implode(",", array_map(array($this, 'integer'), $product_ids));
     }
 
-    public function integer(&$product_id) {
+    public function integer($product_id) {
         if (!is_numeric($product_id)) {
             return 0;
         } else {
@@ -614,35 +628,38 @@ class Googleshopping extends Library {
         $default_config_seo_url = $this->config->get("config_seo_url");
 
         // Do product feed uploads
-        foreach ($this->getJobs() as $job) {
-            try {
-                $report[] = $this->output("Uploading product feed. Work ID: " . $job['work_id']);
-
-                // Set the tax context for the job
-                if (in_array("US", $job['countries'])) {
-                    // In case the feed is for the US, disable taxes because they are already configured on the merchant level by the extension
-                    $this->config->set("config_tax", 0);
+        if ($this->getJobs()) {
+            foreach ($this->getJobs() as $job) {
+                try {
+                    $report[] = $this->output("Uploading product feed. Work ID: " . $job['work_id']);
+    
+                    // Set the tax context for the job
+                    if (in_array("US", $job['countries'])) {
+                        // In case the feed is for the US, disable taxes because they are already configured on the merchant level by the extension
+                        $this->config->set("config_tax", 0);
+                    }
+    
+                    // Set the store and language context for the job
+                    $this->config->set("config_store_id", $this->store_id);
+                    $this->config->set("config_language_id", $job['language_id']);
+                    $this->config->set("config_seo_url", $this->model_setting_setting->getSettingValue("config_seo_url", $this->store_id));
+    
+                    // Do the CRON job
+                    $count = $this->doJob($job);
+    
+                    // Reset the taxes, store, and language to their original state
+                    $this->config->set("config_tax", $default_config_tax);
+                    $this->config->set("config_store_id", $default_config_store_id);
+                    $this->config->set("config_language_id", $default_config_language_id);
+                    $this->config->set("config_seo_url", $default_config_seo_url);
+    
+                    $report[] = $this->output("Uploaded count: " . $count);
+                } catch (\RuntimeException $e) {
+                    $report[] = $this->output($e->getMessage());
                 }
-
-                // Set the store and language context for the job
-                $this->config->set("config_store_id", $this->store_id);
-                $this->config->set("config_language_id", $job['language_id']);
-                $this->config->set("config_seo_url", $this->model_setting_setting->getSettingValue("config_seo_url", $this->store_id));
-
-                // Do the CRON job
-                $count = $this->doJob($job);
-
-                // Reset the taxes, store, and language to their original state
-                $this->config->set("config_tax", $default_config_tax);
-                $this->config->set("config_store_id", $default_config_store_id);
-                $this->config->set("config_language_id", $default_config_language_id);
-                $this->config->set("config_seo_url", $default_config_seo_url);
-
-                $report[] = $this->output("Uploaded count: " . $count);
-            } catch (\RuntimeException $e) {
-                $report[] = $this->output($e->getMessage());
             }
         }
+        
 
         // Reset the taxes, store, and language to their original state
         $this->config->set("config_tax", $default_config_tax);
@@ -797,8 +814,8 @@ class Googleshopping extends Library {
             }
 
             foreach ($status['destinationStatuses'] as $destination_status) {
-                if (!$destination_status['approvalPending']) {
-                    switch ($destination_status['approvalStatus']) {
+                if ($destination_status['status'] != 'pending') {
+                    switch ($destination_status['status']) {
                         case 'approved' :
                             if ($product_level_entries[$product_id]['destination_status'] == 'pending') {
                                 $product_level_entries[$product_id]['destination_status'] = 'approved';
@@ -915,18 +932,20 @@ class Googleshopping extends Library {
             $this->load->model('extension/advertise/google');
 
             foreach ($this->setting->get('advertise_google_work') as $work) {
-                $supported_language_id = $this->getSupportedLanguageId($work['language']);
-                $supported_currency_id = $this->getSupportedCurrencyId($work['currency']);
-
-                if (!empty($supported_language_id) && !empty($supported_currency_id)) {
-                    $currency_info = $this->getCurrency($supported_currency_id);
-
-                    $jobs[] = array(
-                        'work_id' => $work['work_id'],
-                        'countries' => isset($work['countries']) && is_array($work['countries']) ? $work['countries'] : array(),
-                        'language_id' => $supported_language_id,
-                        'currency' => $currency_info['code']
-                    );
+                if ($work) {
+                    $supported_language_id = $this->getSupportedLanguageId($work['language']);
+                    $supported_currency_id = $this->getSupportedCurrencyId($work['currency']);
+    
+                    if (!empty($supported_language_id) && !empty($supported_currency_id)) {
+                        $currency_info = $this->getCurrency($supported_currency_id);
+    
+                        $jobs[] = array(
+                            'work_id' => $work['work_id'],
+                            'countries' => isset($work['countries']) && is_array($work['countries']) ? $work['countries'] : array(),
+                            'language_id' => $supported_language_id,
+                            'currency' => $currency_info['code']
+                        );
+                    }
                 }
             }
         }
@@ -1017,7 +1036,7 @@ class Googleshopping extends Library {
                 throw new \RuntimeException("Image too large, skipping: " . $image_old);
             }
 
-            if (!in_array($image_type, array(IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF))) {
+            if (!in_array($image_type, array(IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF, IMAGETYPE_WEBP))) {
                 throw new \RuntimeException("Unexpected image type, skipping: " . $image_old);
             }
                         
@@ -1100,7 +1119,7 @@ class Googleshopping extends Library {
     protected function getFeedProductsQuery($page, $language_id) {
         $this->load->config('googleshopping/googleshopping');
 
-        $sql = "SELECT p.product_id, pd.name, pd.description, p.image, p.quantity, p.price, p.mpn, p.ean, p.jan, p.isbn, p.upc, p.model, p.tax_class_id, IFNULL((SELECT m.name FROM `" . DB_PREFIX . "manufacturer` m WHERE m.manufacturer_id = p.manufacturer_id), '') as brand, (SELECT GROUP_CONCAT(agt.campaign_name SEPARATOR '<[S]>') FROM `" . DB_PREFIX . "googleshopping_product_target` pagt LEFT JOIN `" . DB_PREFIX . "googleshopping_target` agt ON (agt.advertise_google_target_id = pagt.advertise_google_target_id) WHERE pagt.product_id = p.product_id AND pagt.store_id = p2s.store_id GROUP BY pagt.product_id) as campaign_names, (SELECT CONCAT_WS('<[S]>', ps.price, ps.date_start, ps.date_end) FROM `" . DB_PREFIX . "product_special` ps WHERE ps.product_id=p.product_id AND ps.customer_group_id=" . (int)$this->config->get('config_customer_group_id') . " AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) as special_price, pag.google_product_category, pag.condition, pag.adult, pag.multipack, pag.is_bundle, pag.age_group, pag.color, pag.gender, pag.size_type, pag.size_system, pag.size FROM `" . DB_PREFIX . "product` p LEFT JOIN `" . DB_PREFIX . "product_to_store` p2s ON (p2s.product_id = p.product_id AND p2s.store_id=" . (int)$this->store_id . ") LEFT JOIN `" . DB_PREFIX . "product_description` pd ON (pd.product_id = p.product_id) LEFT JOIN `" . DB_PREFIX . "googleshopping_product` pag ON (pag.product_id = p.product_id AND pag.store_id = p2s.store_id) WHERE p2s.store_id IS NOT NULL AND pd.language_id=" . (int)$language_id . " AND pd.name != '' AND pd.description != '' AND pd.name IS NOT NULL AND pd.description IS NOT NULL AND p.image != '' AND p.status = 1 AND p.date_available <= NOW() AND p.price > 0 ORDER BY p.product_id ASC LIMIT " . (int)(($page - 1) * $this->config->get('advertise_google_push_limit')) . ', ' . (int)$this->config->get('advertise_google_push_limit');
+        $sql = "SELECT p.product_id, pd.name, p.weight, p.weight_class_id, pd.description, p.image, p.quantity, p.price, p.mpn, p.ean, p.jan, p.isbn, p.upc, p.model, p.tax_class_id, IFNULL((SELECT m.name FROM `" . DB_PREFIX . "manufacturer` m WHERE m.manufacturer_id = p.manufacturer_id), '') as brand, (SELECT GROUP_CONCAT(agt.campaign_name SEPARATOR '<[S]>') FROM `" . DB_PREFIX . "googleshopping_product_target` pagt LEFT JOIN `" . DB_PREFIX . "googleshopping_target` agt ON (agt.advertise_google_target_id = pagt.advertise_google_target_id) WHERE pagt.product_id = p.product_id AND pagt.store_id = p2s.store_id GROUP BY pagt.product_id) as campaign_names, (SELECT CONCAT_WS('<[S]>', ps.price, ps.date_start, ps.date_end) FROM `" . DB_PREFIX . "product_special` ps WHERE ps.product_id=p.product_id AND ps.customer_group_id=" . (int)$this->config->get('config_customer_group_id') . " AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) as special_price, pag.google_product_category, pag.condition, pag.adult, pag.multipack, pag.is_bundle, pag.age_group, pag.color, pag.gender, pag.size_type, pag.size_system, pag.size FROM `" . DB_PREFIX . "product` p LEFT JOIN `" . DB_PREFIX . "product_to_store` p2s ON (p2s.product_id = p.product_id AND p2s.store_id=" . (int)$this->store_id . ") LEFT JOIN `" . DB_PREFIX . "product_description` pd ON (pd.product_id = p.product_id) LEFT JOIN `" . DB_PREFIX . "googleshopping_product` pag ON (pag.product_id = p.product_id AND pag.store_id = p2s.store_id) WHERE p2s.store_id IS NOT NULL AND pd.language_id=" . (int)$language_id . " AND pd.name != '' AND pd.description != '' AND pd.name IS NOT NULL AND pd.description IS NOT NULL AND p.image != '' AND p.status = 1 AND p.date_available <= NOW() AND p.price > 0 ORDER BY p.product_id ASC LIMIT " . (int)(($page - 1) * $this->config->get('advertise_google_push_limit')) . ', ' . (int)$this->config->get('advertise_google_push_limit');
 
         return $sql;
     }
@@ -1149,9 +1168,9 @@ class Googleshopping extends Library {
             'content_type' => 'multipart/form-data',
             'data' => $data
         );
-
+        
         $response = $this->api($request);
-
+        
         return $response['url'];
     }
 
@@ -1198,37 +1217,31 @@ class Googleshopping extends Library {
         $statuses = array();
         
         foreach ($this->getTargets($this->store_id) as $target) {
-            $targets[] = $target['campaign_name'];
-            $statuses[$target['campaign_name']] = $target['status'];
+            $targets[] = html_entity_decode($target['campaign_name']);
+            $statuses[html_entity_decode($target['campaign_name'])] = $target['status'];
         }
         $targets[] = 'Total';
 
         $cache = new \Cache($this->config->get('cache_engine'), self::CACHE_CAMPAIGN_REPORT);
         $cache_key = 'advertise_google.' . $this->store_id . '.campaign_reports.' . md5(json_encode(array_keys($statuses)) . $this->setting->get('advertise_google_reporting_interval'));
 
-        $cache_result = $cache->get($cache_key);
-
+        //$cache_result = $cache->get($cache_key);
+        $cache_result = [];
         if (empty($cache_result['result']) || (isset($cache_result['timestamp']) && $cache_result['timestamp'] >= time() + self::CACHE_CAMPAIGN_REPORT)) {
             $request = array(
                 'endpoint' => sprintf(self::ENDPOINT_REPORT_CAMPAIGN, $this->setting->get('advertise_google_reporting_interval')),
                 'use_access_token' => true
             );
 
-            $csv = $this->api($request);
-
-            $lines = explode("\n", trim($csv['campaign_report']));
+            $response = $this->api($request);
 
             $result = array(
                 'date_range' => null,
                 'reports' => array()
             );
 
-            // Get date range
-            $matches = array();
-            preg_match('~CAMPAIGN_PERFORMANCE_REPORT \((.*?)\)~', $lines[0], $matches);
-            $result['date_range'] = $matches[1];
+            $rows = $response['campaign_report'];
 
-            $header = explode(',', $lines[1]);
             $data = array();
             $total = array();
             $value_keys = array();
@@ -1236,58 +1249,86 @@ class Googleshopping extends Library {
             $campaign_keys = array_flip($targets);
 
             $expected = array(
-                'Campaign' => 'campaign_name',
+                'CampaignName' => 'campaign_name',
                 'Impressions' => 'impressions',
                 'Clicks' => 'clicks',
                 'Cost' => 'cost',
                 'Conversions' => 'conversions',
-                'Total conv. value' => 'conversion_value'
+                'ConversionsValue' => 'conversion_value'
             );
-
-            foreach ($header as $i => $title) {
-                if (!in_array($title, array_keys($expected))) {
-                    continue;
+            if (is_array($rows) && $rows) {
+                foreach ($rows[0] as $title => $value) {
+                    if (!in_array($title, array_keys($expected))) {
+                        continue;
+                    }
+                    
+                    $value_keys[$title] = $expected[$title];
                 }
-
-                $value_keys[$i] = $expected[$title];
             }
 
             // Fill blank values
             foreach ($campaign_keys as $campaign_name => $l) {
                 foreach ($value_keys as $i => $key) {
-                    $result['reports'][$l][$key] = $key == 'campaign_name' ? $campaign_name : '&ndash;';
+                    $result['reports'][$l][$key] = $key == 'campaign_name' ? html_entity_decode($campaign_name) : '&ndash;';
+                }
+            }
+            $totals = [];
+            if (is_array($rows) && $rows) {
+                foreach ($rows as $key => $row) {
+                    $l = null;
+
+                    //Identify campaign key
+                    foreach ($row as $k => $item_value) {
+                        if (array_key_exists($k, $value_keys) && array_key_exists(html_entity_decode($item_value), $campaign_keys) && $value_keys[$k] == 'campaign_name') {
+                            $l = $campaign_keys[html_entity_decode($item_value)];
+                        }
+                    }
+
+                    if (!is_null($l)) {
+                        foreach ($row as $k => $item_value) {
+                            if (!array_key_exists($k, $value_keys)) {
+                                continue;
+                            }
+
+                            if (!isset($totals[$value_keys[$k]]) && $value_keys[$k] != 'status' && $value_keys[$k] != 'campaign_name') {
+                                $totals[$value_keys[$k]] = 0;
+                            }
+                            
+                            if ($value_keys[$k] != 'status' && $value_keys[$k] != 'campaign_name' && is_numeric($item_value)) {
+                                $totals[$value_keys[$k]] += $item_value;
+                            }
+                            if (in_array($value_keys[$k], array('cost'))) {
+                                $item_value = $this->currencyFormat((float)$item_value / self::MICROAMOUNT);
+                            } else if (in_array($value_keys[$k], array('conversion_value'))) {
+                                $item_value = $this->currencyFormat((float)$item_value);
+                            } else if ($value_keys[$k] == 'conversions') {
+                                $item_value = (int)$item_value;
+                            }
+                            
+                            $result['reports'][$l][$value_keys[$k]] = $item_value;
+                        }
+                    }
+                }
+            }
+            
+            // Format total values
+            foreach ($totals as $key => $total) {
+                if (in_array($key, array('cost'))) {
+                    $totals[$key] = $this->currencyFormat((float)$totals[$key] / self::MICROAMOUNT);
+                } else if (in_array($key, array('conversion_value'))) {
+                    $totals[$key] = $this->currencyFormat((float)$totals[$key]);
                 }
             }
 
-            // Fill actual values
-            for ($j = 2; $j < count($lines); $j++) {
-                $line_items = explode(',', $lines[$j]);
-                $l = null;
-
-                // Identify campaign key
-                foreach ($line_items as $k => $line_item_value) {
-                    if (array_key_exists($k, $value_keys) && array_key_exists($line_item_value, $campaign_keys) && $value_keys[$k] == 'campaign_name') {
-                        $l = $campaign_keys[$line_item_value];
+            // Fill campaign statuses
+            foreach ($result['reports'] as &$report) {
+                if ($report['campaign_name'] == 'Total') {
+                    $report['status'] = '';
+                    if ($totals) {
+                        $report = array_merge($report, $totals);
                     }
-                }
-
-                // Fill campaign values
-                if (!is_null($l)) {
-                    foreach ($line_items as $k => $line_item_value) {
-                        if (!array_key_exists($k, $value_keys)) {
-                            continue;
-                        }
-
-                        if (in_array($value_keys[$k], array('cost'))) {
-                            $line_item_value = $this->currencyFormat((float)$line_item_value / self::MICROAMOUNT);
-                        } else if (in_array($value_keys[$k], array('conversion_value'))) {
-                            $line_item_value = $this->currencyFormat((float)$line_item_value);
-                        } else if ($value_keys[$k] == 'conversions') {
-                            $line_item_value = (int)$line_item_value;
-                        }
-
-                        $result['reports'][$l][$value_keys[$k]] = $line_item_value;
-                    }
+                } else {
+                    $report['status'] = $statuses[html_entity_decode($report['campaign_name'])];
                 }
             }
 
@@ -1299,14 +1340,7 @@ class Googleshopping extends Library {
             $result = $cache_result['result'];
         }
 
-        // Fill campaign statuses
-        foreach ($result['reports'] as &$report) {
-            if ($report['campaign_name'] == 'Total') {
-                $report['status'] = '';
-            } else {
-                $report['status'] = $statuses[$report['campaign_name']];
-            }
-        }
+        
 
         $this->applyNewSetting('advertise_google_report_campaigns', $result);
     }
@@ -1315,7 +1349,7 @@ class Googleshopping extends Library {
         $cache = new \Cache($this->config->get('cache_engine'), self::CACHE_PRODUCT_REPORT);
         $cache_key = 'advertise_google.' . $this->store_id . '.product_reports.' . md5(json_encode($product_ids) . $this->setting->get('advertise_google_reporting_interval'));
 
-        $cache_result = $cache->get($cache_key);
+        //$cache_result = $cache->get($cache_key);
 
         if (!empty($cache_result['result']) && isset($cache_result['timestamp']) && (time() - self::CACHE_PRODUCT_REPORT <= $cache_result['timestamp'])) {
             return $cache_result['result'];
@@ -1343,17 +1377,17 @@ class Googleshopping extends Library {
         if (!empty($response['ad_report'])) {
             $lines = explode("\n", trim($response['ad_report']));
 
-            $header = explode(',', $lines[1]);
+            $header = explode(',', $lines[0]);
             $data = array();
             $keys = array();
             
             $expected = array(
-                'Item Id' => 'offer_id',
+                'OfferId' => 'offer_id',
                 'Impressions' => 'impressions',
                 'Clicks' => 'clicks',
                 'Cost' => 'cost',
                 'Conversions' => 'conversions',
-                'Total conv. value' => 'conversion_value'
+                'ConversionsValue' => 'conversion_value'
             );
 
             foreach ($header as $i => $title) {
@@ -1366,7 +1400,7 @@ class Googleshopping extends Library {
             }
 
             // We want to omit the last line because it does not include the total number of impressions for all campaigns
-            for ($j = 2; $j < count($lines) - 1; $j++) {
+            for ($j = 1; $j < count($lines) - 1; $j++) {
                 $line_items = explode(',', $lines[$j]);
 
                 $result[$j] = array();
@@ -1784,7 +1818,7 @@ class Googleshopping extends Library {
             'feeds' => $feeds,
             'status' => $target['status'],
             'roas' => $target['roas'],
-            'roas_status' => $target['date_added'] <= date('Y-m-d', time() - self::ROAS_WAIT_INTERVAL),
+            'roas_status' => true,
             'roas_available_on' => strtotime($target['date_added']) + self::ROAS_WAIT_INTERVAL,
             'feeds_raw' => $feeds_raw
         );
@@ -1877,6 +1911,8 @@ class Googleshopping extends Library {
         $curl_options[CURLOPT_URL] = $url;
         $curl_options[CURLOPT_RETURNTRANSFER] = true;
         $curl_options[CURLOPT_HTTPHEADER] = $headers;
+        $curl_options[CURLOPT_SSL_VERIFYHOST] = false;
+        $curl_options[CURLOPT_SSL_VERIFYPEER] = false;
 
         $ch = curl_init();
         curl_setopt_array($ch, $curl_options);

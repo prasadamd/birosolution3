@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<!--[if IE 8 ]><html dir="{{ direction }}" lang="{{ lang }}" class="ie8"><![endif]-->
+<!--[if IE 9 ]><html dir="{{ direction }}" lang="{{ lang }}" class="ie9"><![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+<html dir="{{ direction }}" lang="{{ lang }}">
+<!--<![endif]-->
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-KCCZ5K7');</script>
+<!-- End Google Tag Manager -->
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>{{ title }}</title>
+<base href="{{ base }}" />
+{% if description %}
+<meta name="description" content="{{ description }}" />
+{% endif %}
+{% if keywords %}
+<meta name="keywords" content="{{ keywords }}" />
+{% endif %}
+<script src="catalog/view/javascript/jquery/jquery-2.1.1.min.js"></script>
+<script src="catalog/view/javascript/bootstrap/js/bootstrap.min.js"></script>
+<script src="catalog/view/javascript/jquery/owl-carousel/owl.carousel.min.js"></script>
+<script src="catalog/view/javascript/jquery.countdown.min.js"></script>
+<script src="catalog/view/javascript/jquery.countdown.js"></script>
+<link href="catalog/view/javascript/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" /> 
+<link href="catalog/view/theme/{{ mytemplate }}/stylesheet/stylesheet.css" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&display=swap" rel="stylesheet"> 
+<link rel="stylesheet" type="text/css" href="catalog/view/javascript/jquery/magnific/magnific-popup.css" />
+<link rel="stylesheet" type="text/css" href="catalog/view/theme/{{ mytemplate }}/stylesheet/megnor/lightbox.css" />
+<link rel="stylesheet" type="text/css" href="catalog/view/theme/{{ mytemplate }}/stylesheet/megnor/carousel.css" />
+<link rel="stylesheet" type="text/css" href="catalog/view/theme/{{  mytemplate }}/stylesheet/megnor/custom.css" />
+<link rel="stylesheet" type="text/css" href="catalog/view/theme/{{  mytemplate }}/stylesheet/megnor/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="catalog/view/theme/{{  mytemplate }}/stylesheet/megnor/animate.css" />
+<link rel="stylesheet" type="text/css" href="catalog/view/javascript/jquery/owl-carousel/owl.carousel.css" />
+<link rel="stylesheet" type="text/css" href="catalog/view/javascript/jquery/owl-carousel/owl.transitions.css" />
+{#retele sociale icon#}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+{% if direction == 'rtl' %}
+<link rel="stylesheet" type="text/css" href="catalog/view/theme/{{ mytemplate }}/stylesheet/megnor/rtl.css">
+{% endif %}
+
+{% for style in styles %}
+<link href="{{ style.href }}" type="text/css" rel="{{ style.rel }}" media="{{ style.media }}" />
+{% endfor %}
+{% for script in scripts %}
+<script src="{{ script }}"></script>
+{% endfor %}
+{% for link in links %}
+<link href="{{ link.href }}" rel="{{ link.rel }}" />
+{% endfor %}
+{% for analytic in analytics %}
+{{ analytic }}
+{% endfor %}
+<!-- Megnor www.templatemela.com - Start -->
+<script src="catalog/view/javascript/megnor/custom.js"></script>
+<script src="catalog/view/javascript/megnor/jstree.min.js"></script>
+<script src="catalog/view/javascript/megnor/carousel.min.js"></script>
+<script src="catalog/view/javascript/megnor/megnor.min.js"></script>
+<script src="catalog/view/javascript/megnor/jquery.custom.min.js"></script>
+<script src="catalog/view/javascript/megnor/jquery.formalize.min.js"></script>
+<script src="catalog/view/javascript/megnor/jquery.elevatezoom.min.js"></script>
+<script src="catalog/view/javascript/megnor/bootstrap-notify.min.js"></script>  
+<script src="catalog/view/javascript/jquery/magnific/jquery.magnific-popup.min.js"></script>
+<script src="catalog/view/javascript/megnor/tabs.js"></script>
+<script src="catalog/view/javascript/megnor/jquery.hoverdir.js"></script>
+<script src="catalog/view/javascript/megnor/modernizr.js"></script>
+<script src="catalog/view/javascript/lightbox/lightbox-2.6.min.js"></script>
+
+
+<!-- ======= Quick view JS ========= -->
+<script> 
+
+function quickbox(){
+ if ($(window).width() > 767) {
+    $('.quickview-button').magnificPopup({
+      type:'iframe',
+      delegate: 'a',
+      preloader: true,
+      tLoading: 'Loading image #%curr%...',
+    });
+ }  
+}
+jQuery(document).ready(function() {quickbox();});
+jQuery(window).resize(function() {quickbox();});
+
+</script>
+
+<!-- Megnor www.templatemela.com - End -->
+
+<script src="catalog/view/javascript/common.js"></script>
+
+
+</head>
+
+{% if (column_left and column_right) %}
+{% set layoutclass = 'layout-3' %}
+{% elseif (column_left or column_right) %}
+{% if column_left %}
+{% set layoutclass = 'layout-2 left-col' %}
+{% elseif column_right %}
+{% set layoutclass = 'layout-2 right-col' %}
+{% endif %}
+{% else %}
+{% set layoutclass = 'layout-1' %}
+{% endif %}
+
+
+<style>
+/* Media query pentru ecrane mai mici de 767px (mobile) */
+@media (max-width: 767px) {
+    
+    #HeaderMobile {
+        display: flex;
+        flex-direction: row; 
+        justify-content: center;
+        align-items: center; 
+        overflow: hidden;
+       
+    }
+.col-sm-3.header_cart.language-pc {
+    display: none;
+}
+  .form-group.qty {
+  	padding: 0px; !important
+  }
+
+
+    
+    
+}
+
+/* Media query pentru ecrane de 767px sau mai mari (desktop) */
+@media (min-width: 767px) {
+    #HeaderMobile {
+        display: none; /* Ascunde elementul pe ecrane mici */
+    }
+}
+
+
+    
+</style>
+<body class="{{ class }} {{ " " }} {{ layoutclass }}">
+<nav id="top">
+  <div class="container">
+    <div class="row">
+   {#{{ headertopleft }}#}
+   {# <div class="offer-title">#}
+	   
+
+   {# </div>#}
+     
+  </div>
+  </div>
+</nav>
+<header>
+    <div id="HeaderMobile" >
+           <b>  <i class="fa fa-phone "style="font-size:16px"></i> {{text_call}}   <a href="tel:+37368455654">+37368455654</a>
+    </a></b>
+    <div class="col-sm-3 header_cart">  
+    {{ language }}
+    {{ currency }}
+</div>
+        </div>
+    
+<div class="header_top">
+  <div class="container">
+	<div class="row">
+      <div class="col-sm-2 header-logo"  style="margin-top:-2%">
+          
+     <div id="logo">
+    {% if logo %}
+        <a href="{{ home }}">
+            <img src="{{ logo }}" title="{{ name }}" alt="{{ name }}" class="img-responsive"  width="150" height="auto" />
+        </a>
+    {% else %}
+        <h1><a href="{{ home }}">{{ name }}</a></h1>
+    {% endif %}
+</div>
+
+      </div>  
+        
+	  <div class="col-sm-5 header_search">{{ search }}</div>	
+
+
+       
+    <div class="account"> 
+
+<div class="col-sm-3 header_cart language-pc" >  
+    {{ language }}
+    {{ currency }}
+</div>
+
+
+      <div class="dropdown myaccount"><a href="{{ account }}" title="{{ text_account }}" class="dropdown-toggle" data-toggle="dropdown"></a>
+      
+          <ul class="dropdown-menu dropdown-menu-right myaccount-menu">
+              
+            {#<span class="drop_account">#}
+        <div class="login_acc">
+            
+        {% if logged %}
+        
+          <li><a href="{{ account }}" title="{{ text_account }}">{{ text_account }}</a></li>
+          {#<li><a href="{{ checkout }}" title="{{ text_checkout }}"><span class="checkout">{{ text_checkout }}</span></a></li>#}
+          <li><a class="account_logout1" href="{{ logout }}">{{ text_logout }}</a></li>
+          
+          {% else %}
+          	<li><a class="login" href="{{ login }}">{{ text_login }}</a></li>
+          <li><a class="reg" href="{{ register }}">{{ text_register }}</a></li>
+          {#<li><a href="{{ checkout }}" title="{{ text_checkout }}"><span class="checkout">{{ text_checkout }}</span></a></li>#}
+        
+        {% endif %}
+        </div>
+     
+          {#</span>      #}
+         </ul>
+        </div>
+      <div class="header_wishlist"><a href="{{ wishlist }}" id="wishlist-total"><span>{{ text_wishlist }}</span></a></div>
+      <div class="col-sm-3 header_cart">{{ cart }}</div>
+      
+  
+  
+    </div>
+    
+    </div>
+   
+  </div>
+
+</div>
+<div class="header_bottom_cover">
+<div class="header_bottom">
+	<div class="container">
+		<div class="row">
+			{{ headerleft }} 
+		<div class="header_center">
+			{{ menu }}
+		</div>			
+	 <div class="header_right">
+	     {#{{ headertop }}#}
+	     <div class="offer-title">
+	      <a href="tel:+37368455654">
+   <b>  <i class="fa fa-phone "style="font-size:16px"></i> {{text_call}}+37368455654
+    </a></b>
+    </div>
+	 </div>
+	</div> 
+    </div>
+  </div>
+</div>
+
+
+{#Google tags#}
+
+</header>
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KCCZ5K7"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<div class="content-top-breadcum">
+<div class="container">
+<div class="row">
+<div id="title-content"> 
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+<style>
+    document.addEventListener('DOMContentLoaded', (event) => {
+    const dropdowns = document.querySelectorAll('#nav-one > li > .dropdown-menu.megamenu');
+
+    dropdowns.forEach((dropdown) => {
+        let timeoutId;
+
+        // Funcția care setează display block
+        const setDisplayBlock = () => {
+            dropdown.style.display = 'block';
+        };
+
+        // Funcția care ascunde dropdown-ul
+        const hideDropdown = () => {
+            dropdown.style.display = '';
+        };
+
+        // Eveniment mouseenter pentru a anula timeout-ul
+        dropdown.addEventListener('mouseenter', () => {
+            clearTimeout(timeoutId);
+            setDisplayBlock();
+        });
+
+        // Eveniment mouseleave pentru a porni timeout-ul
+        dropdown.addEventListener('mouseleave', () => {
+            timeoutId = setTimeout(setDisplayBlock, 10000);
+        });
+
+        // Asigură că dropdown-ul este ascuns la inițializare
+        hideDropdown();
+    });
+});
+
+
+
+</style>
+
+

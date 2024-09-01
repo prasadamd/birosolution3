@@ -1,0 +1,22 @@
+<div class="top-links-cover">
+<span class="top-links-toggle"><svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+<g>
+	<g>
+		<g>
+			<circle cx="256" cy="256" r="64"/>
+			<circle cx="256" cy="448" r="64"/>
+			<circle cx="256" cy="64" r="64"/>
+		</g>
+	</g>
+</g>
+</svg></span>
+<div class="top-links">
+	{% for externallink in externallinks %} 
+		{% if not externallink['link_url'] == " " %}
+		{% else %}
+			<a href="{{ externallink['link_url'] }}" class="links-item">{{ externallink['link_title'] }}</a>
+		{% endif %}
+	{% endfor %} 
+</div>
+</div>

@@ -1,0 +1,10 @@
+<table class="table table-bordered">
+	{% for total in totals %} 
+	 {% if not loop.index0 == 1 %}
+		<tr>
+			<td class="text-right"><strong>{{ heading_total }}:</strong></td>
+			<td class="text-right">{{ total.text }}</td>
+		</tr>
+		{%endif%}
+	{% endfor %} 
+</table>
