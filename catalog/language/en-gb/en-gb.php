@@ -2,7 +2,7 @@
 // Locale
 $_['code']                  = 'en';
 $_['direction']             = 'ltr';
-$_['date_format_short']     = 'd/m/Y';
+$_['date_format_short']     = 'd M Y';
 $_['date_format_long']      = 'l dS F Y';
 $_['time_format']           = 'h:i:s A';
 $_['datetime_format']       = 'd/m/Y H:i:s';
@@ -19,6 +19,10 @@ $_['text_all_zones']        = 'All Zones';
 $_['text_pagination']       = 'Showing %d to %d of %d (%d Pages)';
 $_['text_loading']          = 'Loading...';
 $_['text_no_results']       = 'No results!';
+$_['text_instock']       	= 'In Stock';
+$_['text_outstock']       	= 'Out Of Stock';
+$_['text_productavail']       = 'Product available in stock';
+
 
 // Buttons
 $_['button_address_add']    = 'Add Address';
@@ -26,7 +30,7 @@ $_['button_back']           = 'Back';
 $_['button_continue']       = 'Continue';
 $_['button_cart']           = 'Add to Cart';
 $_['button_cancel']         = 'Cancel';
-$_['button_compare']        = 'Compare this Product';
+$_['button_compare']        = 'Add to compare';
 $_['button_wishlist']       = 'Add to Wish List';
 $_['button_checkout']       = 'Checkout';
 $_['button_confirm']        = 'Confirm Order';

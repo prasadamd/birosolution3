@@ -248,6 +248,10 @@ class ControllerProductProduct extends Controller {
 
 			$this->load->model('catalog/review');
 
+
+			//print_r($product_info);
+
+
 			$data['tab_review'] = sprintf($this->language->get('tab_review'), $product_info['reviews']);
 
 			$data['product_id'] = (int)$this->request->get['product_id'];
@@ -256,7 +260,9 @@ class ControllerProductProduct extends Controller {
 			$data['model'] = $product_info['model'];
 			$data['reward'] = $product_info['reward'];
 			$data['points'] = $product_info['points'];
+			$data['sku'] = $product_info['sku'];
 			$data['description'] = html_entity_decode($product_info['description'], ENT_QUOTES, 'UTF-8');
+
 
 			if ($product_info['quantity'] <= 0) {
 				$data['stock'] = $product_info['stock_status'];
@@ -265,6 +271,15 @@ class ControllerProductProduct extends Controller {
 			} else {
 				$data['stock'] = $this->language->get('text_instock');
 			}
+
+			//stock status
+			if ($product_info['quantity'] <= 0) {
+				$data['stock_qty'] ='false';
+			} else {
+				$data['stock_qty'] = 'true';
+			}
+
+			$data['qty_stock'] = $product_info['quantity'];
 
 			$this->load->model('tool/image');
 
@@ -304,6 +319,8 @@ class ControllerProductProduct extends Controller {
 				$data['special'] = false;
 				$tax_price = (float)$product_info['price'];
 			}
+			//calculate discount on product page
+			$data['percentsaving'] = round((($product_info['price'] - $product_info['special'])/$product_info['price'])*100, 0);
 
 			if ($this->config->get('config_tax')) {
 				$data['tax'] = $this->currency->format($tax_price, $this->session->data['currency']);
@@ -401,7 +418,18 @@ class ControllerProductProduct extends Controller {
 				} else {
 					$image = $this->model_tool_image->resize('placeholder.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_height'));
 				}
-
+				//added for image swap
+				
+			$images = $this->model_catalog_product->getProductImages($result['product_id']);
+	
+			if(isset($images[0]['image']) && !empty($images)){
+			$images = $images[0]['image']; 
+			}else
+			{
+			$images = $image;
+			}
+						
+		//
 				if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
 					$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 				} else {
@@ -431,6 +459,9 @@ class ControllerProductProduct extends Controller {
 				$data['products'][] = array(
 					'product_id'  => $result['product_id'],
 					'thumb'       => $image,
+					'qty'    	  => $result['quantity'],
+					'brand'        => $result['manufacturer'],
+					'review'        => $result['reviews'],
 					'name'        => $result['name'],
 					'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
 					'price'       => $price,
@@ -438,11 +469,19 @@ class ControllerProductProduct extends Controller {
 					'tax'         => $tax,
 					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
 					'rating'      => $rating,
-					'href'        => $this->url->link('product/product', 'product_id=' . $result['product_id'])
+					'href'        => $this->url->link('product/product', 'product_id=' . $result['product_id']),
+					'quick'        => $this->url->link('product/quick_view','&product_id=' . $result['product_id']),
+					'percentsaving' 	 => round((( $result['price'] -  $result['special'])/ $result['price'])*100, 0),
+					'thumb_swap'  => $this->model_tool_image->resize($images, $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), 
+					$this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height')),
 				);
 			}
 
 			$data['tags'] = array();
+
+                          // check live price update for option module is enable or not
+				$data['update_price_status'] = $this->config->get('module_update_price_status');                        
+
 
 			if ($product_info['tag']) {
 				$tags = explode(',', $product_info['tag']);
@@ -465,6 +504,7 @@ class ControllerProductProduct extends Controller {
 			$data['content_bottom'] = $this->load->controller('common/content_bottom');
 			$data['footer'] = $this->load->controller('common/footer');
 			$data['header'] = $this->load->controller('common/header');
+			$data['productblock'] = $this->load->controller('common/productblock');
 
 			$this->response->setOutput($this->load->view('product/product', $data));
 		} else {
@@ -623,6 +663,85 @@ class ControllerProductProduct extends Controller {
 		$this->response->setOutput(json_encode($json));
 	}
 
+
+				public function updatePrice() {
+					$json = array();
+					
+					$this->load->model('catalog/product');
+					
+					$product_info = $this->model_catalog_product->getProduct($this->request->get['product_id']);
+					
+					$option_price = 0;
+					
+					if(isset($this->request->post['option']) && $this->request->post['option']) {
+						foreach($this->request->post['option'] as $product_option_id => $value) {
+						
+							$result = $this->model_catalog_product->getUpdateOptionsList($this->request->get['product_id'], $product_option_id);
+							
+							if($result) {				
+								if($result['type'] == 'select' || $result['type'] == 'radio') {
+									$option_values = $this->model_catalog_product->getUpdateOptionValues($value, $product_option_id);
+									
+									if($option_values) {
+										if ($option_values['price_prefix'] == '+') {
+											$option_price += $option_values['price'];
+										} elseif ($option_values['price_prefix'] == '-') {
+											$option_price -= $option_values['price'];
+										}
+									}
+									
+								} elseif ($result['type'] == 'checkbox' && is_array($value)) {
+									foreach ($value as $product_option_value_id) {
+										$option_values = $this->model_catalog_product->getUpdateOptionChcekboxValues($product_option_value_id, $product_option_id);
+										
+										if($option_values) {
+											if ($option_values['price_prefix'] == '+') {
+												$option_price += $option_values['price'];
+											} elseif ($option_values['price_prefix'] == '-') {
+												$option_price -= $option_values['price'];
+											}
+										}
+									}
+								}
+							} 
+						}
+					}
+					
+					$price = $product_info['price'];
+					
+					$new_price_found = 0;
+					// For Discount Amount
+					$discount_amount = $this->model_catalog_product->getDiscountAmountForUpdatePrice($this->request->get['product_id'], $this->request->post['quantity']);
+					
+					if ($discount_amount) {
+						$price = $discount_amount;
+					}
+					
+					// check for the special price of product
+					if ($product_info['special']) {
+						$price = $product_info['special'];
+						$new_price_found = 1;
+					}
+					
+					$total_price = $price + $option_price;
+					
+					// Total Calculation
+					$unit_price = $this->tax->calculate($total_price, $product_info['tax_class_id'], $this->config->get('config_tax'));
+					$total = $this->currency->format($unit_price * $this->request->post['quantity'], $this->session->data['currency']);
+					
+					// Tax Calculation
+					$unit_tax = $this->tax->calculate($product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax'));
+					
+					$tax_total = $this->currency->format(((float)$product_info['special'] ? ($product_info['special'] + $option_price) : ($product_info['price'] + $option_price)) * $this->request->post['quantity'], $this->session->data['currency']);
+					
+					$json['total_price'] = $total;
+					$json['new_price_found'] = $new_price_found;
+					$json['tax_price'] = $tax_total;
+					
+					$this->response->addHeader('Content-Type: application/json');
+					$this->response->setOutput(json_encode($json));
+				}
+			 
 	public function getRecurringDescription() {
 		$this->load->language('product/product');
 		$this->load->model('catalog/product');

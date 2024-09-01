@@ -164,14 +164,39 @@
                       <input type="checkbox" name="selected[]" value="{{ product.product_id }}" />
                       {% endif %}</td>
                     <td class="text-center">{% if product.image %} <img src="{{ product.image }}" alt="{{ product.name }}" class="img-thumbnail" /> {% else %} <span class="img-thumbnail list"><i class="fa fa-camera fa-2x"></i></span> {% endif %}</td>
-                    <td class="text-left">{{ product.name }}</td>
+                    <td class="text-left">{{ product.name }}
+           
+
+                  
+                    </td>
                     <td class="text-left">{{ product.model }}</td>
                     <td class="text-right">{% if product.special %} <span style="text-decoration: line-through;">{{ product.price }}</span><br/>
                       <div class="text-danger">{{ product.special }}</div>
                       {% else %}
                       {{ product.price }}
                       {% endif %}</td>
-                    <td class="text-right">{% if product.quantity <= 0 %} <span class="label label-warning">{{ product.quantity }}</span> {% elseif product.quantity <= 5 %} <span class="label label-danger">{{ product.quantity }}</span> {% else %} <span class="label label-success">{{ product.quantity }}</span> {% endif %}</td>
+                    <td class="text-right">{% if product.quantity <= 0 %} <span class="label label-warning">{{ product.quantity }}
+                   
+                    
+                    
+                    {% elseif product.quantity <= 5 %} <span class="label label-danger">{{ product.quantity }}</span> {% else %} 
+{#{% if product.options %}#}
+
+{#        {% for option in product.options %}#}
+        
+{#                <ul>#}
+{#                    {% for optionQuan in option.product_option_value %}#}
+{#                        <li>{{ optionQuan.quantity }}</li>#}
+{#                    {% endfor %}#}
+{#                </ul>#}
+    
+{#        {% endfor %}#}
+ 
+{#{% else %}#}
+ <span class="label label-success">{{ product.quantity }}   </span>
+{#{% endif %}#}
+
+                   {% endif %}</td>
                     <td class="text-left">{{ product.status }}</td>
                     <td class="text-right"><a href="{{ product.edit }}" data-toggle="tooltip" title="{{ button_edit }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a></td>
                   </tr>

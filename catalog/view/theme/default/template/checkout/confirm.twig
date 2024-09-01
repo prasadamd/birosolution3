@@ -38,10 +38,12 @@
     <tfoot>
     
     {% for total in totals %}
+     {% if loop.index0 != 1 %}
     <tr>
       <td colspan="4" class="text-right"><strong>{{ total.title }}:</strong></td>
       <td class="text-right">{{ total.text }}</td>
     </tr>
+    {%endif%}
     {% endfor %}
       </tfoot>
     
