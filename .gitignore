@@ -1,8 +1,3 @@
 /images/
-config.php
-/admin/config.php
 /.vs/
-.htaccess.txt
-index.php
-php.ini
-/storage/
+.idea
