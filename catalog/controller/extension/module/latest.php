@@ -9,14 +9,7 @@ class ControllerExtensionModuleLatest extends Controller {
 
 		$data['products'] = array();
 
-		$filter_data = array(
-			'sort'  => 'p.date_added',
-			'order' => 'DESC',
-			'start' => 0,
-			'limit' => $setting['limit']
-		);
-
-		$results = $this->model_catalog_product->getProducts($filter_data);
+		$results = $this->model_catalog_product->getLatestProducts($setting['limit']);
 
 		if ($results) {
 			foreach ($results as $result) {
@@ -25,18 +18,6 @@ class ControllerExtensionModuleLatest extends Controller {
 				} else {
 					$image = $this->model_tool_image->resize('placeholder.png', $setting['width'], $setting['height']);
 				}
-				//added for image swap
-				
-					$images = $this->model_catalog_product->getProductImages($result['product_id']);
-	
-					if(isset($images[0]['image']) && !empty($images)){
-					 $images = $images[0]['image']; 
-					   }else
-					   {
-					   $images = $image;
-					   }
-						
-					//
 
 				if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
 					$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
@@ -44,14 +25,16 @@ class ControllerExtensionModuleLatest extends Controller {
 					$price = false;
 				}
 
-				if ((float)$result['special']) {
+				if (!is_null($result['special']) && (float)$result['special'] >= 0) {
 					$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+					$tax_price = (float)$result['special'];
 				} else {
 					$special = false;
+					$tax_price = (float)$result['price'];
 				}
-
+	
 				if ($this->config->get('config_tax')) {
-					$tax = $this->currency->format((float)$result['special'] ? $result['special'] : $result['price'], $this->session->data['currency']);
+					$tax = $this->currency->format($tax_price, $this->session->data['currency']);
 				} else {
 					$tax = false;
 				}
@@ -71,8 +54,7 @@ class ControllerExtensionModuleLatest extends Controller {
 					'special'     => $special,
 					'tax'         => $tax,
 					'rating'      => $rating,
-					'href'        => $this->url->link('product/product', 'product_id=' . $result['product_id']),
-					'thumb_swap'  => $this->model_tool_image->resize($images , $setting['width'], $setting['height']),
+					'href'        => $this->url->link('product/product', 'product_id=' . $result['product_id'])
 				);
 			}
 

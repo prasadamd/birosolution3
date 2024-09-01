@@ -29,6 +29,7 @@ error_reporting(E_ALL);
 define('DIR_APPLICATION', str_replace('\\', '/', realpath(dirname(__FILE__))) . '/');
 define('DIR_SYSTEM', str_replace('\\', '/', realpath(dirname(__FILE__) . '/../')) . '/system/');
 define('DIR_OPENCART', str_replace('\\', '/', realpath(DIR_APPLICATION . '../')) . '/');
+define('DIR_STORAGE', DIR_SYSTEM . 'storage/');
 define('DIR_DATABASE', DIR_SYSTEM . 'database/');
 define('DIR_LANGUAGE', DIR_APPLICATION . 'language/');
 define('DIR_TEMPLATE', DIR_APPLICATION . 'view/template/');
@@ -48,7 +49,7 @@ $registry->set('load', $loader);
 
 function handleError($errno, $errstr, $errfile, $errline, array $errcontext) {
 	// error was suppressed with the @-operator
-	if (0 === error_reporting()) {
+	if (!(error_reporting() & $errno)) {
 		return false;
 	}
 	throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
@@ -142,8 +143,8 @@ function install($options) {
 
 function check_requirements() {
 	$error = null;
-	if (phpversion() < '5.4') {
-		$error = 'Warning: You need to use PHP5.4+ or above for OpenCart to work!';
+	if (phpversion() < '7.3') {
+		$error = 'Warning: You need to use PHP7.3+ or above for OpenCart to work!';
 	}
 
 	if (!ini_get('file_uploads')) {
@@ -209,8 +210,6 @@ function setup_db($data) {
 		}
 
 		$db->query("SET CHARACTER SET utf8");
-
-		$db->query("SET @@session.sql_mode = 'MYSQL40'");
 
 		$db->query("DELETE FROM `" . $data['db_prefix'] . "user` WHERE user_id = '1'");
 

@@ -20,7 +20,7 @@ class ModelUpgrade1009 extends Model {
 				$customer_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "customer` WHERE `email` = '" . $this->db->escape($affiliate['email']) . "'");
 				
 				if (!$customer_query->num_rows) {
-					$this->db->query("INSERT INTO `" . DB_PREFIX . "customer` SET `customer_group_id` = '" . (int)$config->get('config_customer_group_id') . "', `language_id` = '" . (int)$config->get('config_customer_group_id') . "', `firstname` = '" . $this->db->escape($affiliate['firstname']) . "', `lastname` = '" . $this->db->escape($affiliate['lastname']) . "', `email` = '" . $this->db->escape($affiliate['email']) . "', `telephone` = '" . $this->db->escape($affiliate['telephone']) . "', `password` = '" . $this->db->escape($affiliate['password']) . "', `salt` = '" . $this->db->escape($affiliate['salt']) . "', `cart` = '" . $this->db->escape(json_encode(array())) . "', `wishlist` = '" . $this->db->escape(json_encode(array())) . "', `newsletter` = '0', `custom_field` = '" . $this->db->escape(json_encode(array())) . "', `ip` = '" . $this->db->escape($affiliate['ip']) . "', `status` = '" . $this->db->escape($affiliate['status']) . "', `approved` = '" . (int)$affiliatee['approved'] . "', `date_added` = '" . $this->db->escape($affiliate['date_added']) . "'");
+					$this->db->query("INSERT INTO `" . DB_PREFIX . "customer` SET `customer_group_id` = '" . (int)$config->get('config_customer_group_id') . "', `language_id` = '" . (int)$config->get('config_customer_group_id') . "', `firstname` = '" . $this->db->escape($affiliate['firstname']) . "', `lastname` = '" . $this->db->escape($affiliate['lastname']) . "', `email` = '" . $this->db->escape($affiliate['email']) . "', `telephone` = '" . $this->db->escape($affiliate['telephone']) . "', `password` = '" . $this->db->escape($affiliate['password']) . "', `salt` = '" . $this->db->escape($affiliate['salt']) . "', `cart` = '" . $this->db->escape(json_encode(array())) . "', `wishlist` = '" . $this->db->escape(json_encode(array())) . "', `newsletter` = '0', `custom_field` = '" . $this->db->escape(json_encode(array())) . "', `ip` = '" . $this->db->escape($affiliate['ip']) . "', `status` = '" . $this->db->escape($affiliate['status']) . "', `approved` = '" . (int)$affiliate['approved'] . "', `date_added` = '" . $this->db->escape($affiliate['date_added']) . "'");
 					
 					$customer_id = $this->db->getLastId();
 					
@@ -67,10 +67,13 @@ class ModelUpgrade1009 extends Model {
 			$this->db->query("DROP TABLE `" . DB_PREFIX . "affiliate_transaction`");
 		}
 	
+		// Api
 		$query = $this->db->query("SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = '" . DB_DATABASE . "' AND TABLE_NAME = '" . DB_PREFIX . "api' AND COLUMN_NAME = 'name'");
-		
+
 		if ($query->num_rows) {
-			$this->db->query("ALTER TABLE `" . DB_PREFIX . "api` CHANGE `name` `username` VARCHAR(64) NOT NULL");
+			$this->db->query("ALTER TABLE `" . DB_PREFIX . "api` DROP COLUMN `username`");
+			$this->db->query("ALTER TABLE `" . DB_PREFIX . "api` CHANGE COLUMN `name` `username` VARCHAR(64) NOT NULL");
+			$this->db->query("ALTER TABLE `" . DB_PREFIX . "api` MODIFY `username` VARCHAR(64) NOT NULL AFTER `api_id`");
 		}
 		
 		// Events

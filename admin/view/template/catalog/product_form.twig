@@ -25,10 +25,7 @@
       <div class="panel-body">
         <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-product" class="form-horizontal">
           <ul class="nav nav-tabs">
-            <li class="active"><a href="#tab-general" data-toggle="tab">{{ tab_general }}
-            
-            
-            </a></li>
+            <li class="active"><a href="#tab-general" data-toggle="tab">{{ tab_general }}</a></li>
             <li><a href="#tab-data" data-toggle="tab">{{ tab_data }}</a></li>
             <li><a href="#tab-links" data-toggle="tab">{{ tab_links }}</a></li>
             <li><a href="#tab-attribute" data-toggle="tab">{{ tab_attribute }}</a></li>
@@ -148,12 +145,6 @@
                 <label class="col-sm-2 control-label" for="input-price">{{ entry_price }}</label>
                 <div class="col-sm-10">
                   <input type="text" name="price" value="{{ price }}" placeholder="{{ entry_price }}" id="input-price" class="form-control"/>
-                </div>
-                <br><br><br>
-                <label class="col-sm-2 control-label" for="input-weight">{{ entry_weight }}</label>
-                <div class="col-sm-10">
-                  <input type="text" name="weight" value="{{ weight }}" placeholder="{{ entry_weight }}" id="input-weight" class="form-control"/>
-
                 </div>
               </div>
               <div class="form-group">
@@ -316,12 +307,12 @@
                   </select>
                 </div>
               </div>
-{#              <div class="form-group">#}
-{#                <label class="col-sm-2 control-label" for="input-weight">{{ entry_weight }}</label>#}
-{#                <div class="col-sm-10">#}
-{#                  <input type="text" name="weight" value="{{ weight }}" placeholder="{{ entry_weight }}" id="input-weight" class="form-control"/>#}
-{#                </div>#}
-{#              </div>#}
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-weight">{{ entry_weight }}</label>
+                <div class="col-sm-10">
+                  <input type="text" name="weight" value="{{ weight }}" placeholder="{{ entry_weight }}" id="input-weight" class="form-control"/>
+                </div>
+              </div>
               <div class="form-group">
                 <label class="col-sm-2 control-label" for="input-weight-class">{{ entry_weight_class }}</label>
                 <div class="col-sm-10">
@@ -1134,8 +1125,8 @@
   <script type="text/javascript" src="view/javascript/codemirror/lib/codemirror.js"></script>
   <script type="text/javascript" src="view/javascript/codemirror/lib/xml.js"></script>
   <script type="text/javascript" src="view/javascript/codemirror/lib/formatting.js"></script>
-  <script type="text/javascript" src="view/javascript/summernote/summernote.js"></script>
-  <link href="view/javascript/summernote/summernote.css" rel="stylesheet"/>
+  <script type="text/javascript" src="view/javascript/summernote/summernote.min.js"></script>
+  <link href="view/javascript/summernote/summernote.min.css" rel="stylesheet"/>
   <script type="text/javascript" src="view/javascript/summernote/summernote-image-attributes.js"></script>
   <script type="text/javascript" src="view/javascript/summernote/opencart.js"></script>
   <script type="text/javascript"><!--

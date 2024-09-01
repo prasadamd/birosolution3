@@ -28,29 +28,8 @@ class ControllerCommonFooter extends Controller {
 		$data['order'] = $this->url->link('account/order', '', true);
 		$data['wishlist'] = $this->url->link('account/wishlist', '', true);
 		$data['newsletter'] = $this->url->link('account/newsletter', '', true);
-		
 
 		$data['powered'] = sprintf($this->language->get('text_powered'), $this->config->get('config_name'), date('Y', time()));
-		
-		$data['footerright'] = $this->load->controller('common/footerright');
-		$data['footerbottom'] = $this->load->controller('common/footerbottom');
-		$data['footertop'] = $this->load->controller('common/footertop');
-
-		// Manufacture
-
-		$this->load->model('catalog/manufacturer');
-		
-		$data['manufacturer_list'] = array();
-		
-		$manufacturers = $this->model_catalog_manufacturer->getManufacturers();
-		
-		foreach ($manufacturers as $manufacturer_list) {
-			$data['manufacturer_list'][] = array(
-				'name' => $manufacturer_list['name'],
-				'href' => $this->url->link('product/manufacturer/info', 'manufacturer_id=' . $manufacturer_list['manufacturer_id'])
-			);
-		}
-		//End Manufacure
 
 		// Whos Online
 		if ($this->config->get('config_customer_online')) {
@@ -75,11 +54,10 @@ class ControllerCommonFooter extends Controller {
 			}
 
 			$this->model_tool_online->addOnline($ip, $this->customer->getId(), $url, $referer);
-
 		}
 
-				$data['footerright'] = $this->load->controller('common/footerright');
 		$data['scripts'] = $this->document->getScripts('footer');
+		$data['styles'] = $this->document->getStyles('footer');
 		
 		return $this->load->view('common/footer', $data);
 	}

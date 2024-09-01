@@ -12,11 +12,8 @@ class ControllerProductCompare extends Controller {
 		}
 
 		if (isset($this->request->get['remove'])) {
-			$key = array_search(trim($this->request->get['remove']), $this->session->data['compare']);
-			// fix
-			$a = array_flip($this->session->data['compare']);
-			$key = $a[$this->request->get['remove'].' '];
-			
+			$key = array_search($this->request->get['remove'], $this->session->data['compare']);
+
 			if ($key !== false) {
 				unset($this->session->data['compare'][$key]);
 
@@ -70,7 +67,7 @@ class ControllerProductCompare extends Controller {
 					$price = false;
 				}
 
-				if ((float)$product_info['special']) {
+				if (!is_null($product_info['special']) && (float)$product_info['special'] >= 0) {
 					$special = $this->currency->format($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 				} else {
 					$special = false;

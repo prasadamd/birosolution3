@@ -3,19 +3,10 @@ class ControllerExtensionModuleSpecial extends Controller {
 	public function index($setting) {
 		$this->load->language('extension/module/special');
 
-		if (isset($this->request->get['product_id'])) {
-			$product_id = (int)$this->request->get['product_id'];
-		} else {
-			$product_id = 0;
-		}
-
 		$this->load->model('catalog/product');
 
-		$product_info = $this->model_catalog_product->getProduct($product_id);
-		
-
 		$this->load->model('tool/image');
-		
+
 		$data['products'] = array();
 
 		$filter_data = array(
@@ -24,15 +15,9 @@ class ControllerExtensionModuleSpecial extends Controller {
 			'start' => 0,
 			'limit' => $setting['limit']
 		);
-		
-		$data['images'] = array();
-		
-		
+
 		$results = $this->model_catalog_product->getProductSpecials($filter_data);
-		
-		
-	//print_r($results);
-		
+
 		if ($results) {
 			foreach ($results as $result) {
 				if ($result['image']) {
@@ -40,44 +25,23 @@ class ControllerExtensionModuleSpecial extends Controller {
 				} else {
 					$image = $this->model_tool_image->resize('placeholder.png', $setting['width'], $setting['height']);
 				}
-				
-				//added for image swap
-				
-					$images = $this->model_catalog_product->getProductImages($result['product_id']);
-	
-					if(isset($images[0]['image']) && !empty($images)){
-					 $images = $images[0]['image']; 
-					   }else
-					   {
-					   $images = $image;
-					   }
-						
-					//
-				   
+
 				if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
 					$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 				} else {
 					$price = false;
 				}
-				
-				if ($result['special_end'] && $result['special_end']!='0000-00-00') {
-					$data['specialTime'] = $result['special_end'];
-				}
-				
-				
-				if ((float)$result['special']) {
-					$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
-					$data['specialTime'] = $result['special_end'];
-					
 
-					
+				if (!is_null($result['special']) && (float)$result['special'] >= 0) {
+					$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+					$tax_price = (float)$result['special'];
 				} else {
 					$special = false;
+					$tax_price = (float)$result['price'];
 				}
-
-
+	
 				if ($this->config->get('config_tax')) {
-					$tax = $this->currency->format((float)$result['special'] ? $result['special'] : $result['price'], $this->session->data['currency']);
+					$tax = $this->currency->format($tax_price, $this->session->data['currency']);
 				} else {
 					$tax = false;
 				}
@@ -87,26 +51,18 @@ class ControllerExtensionModuleSpecial extends Controller {
 				} else {
 					$rating = false;
 				}
-				
+
 				$data['products'][] = array(
 					'product_id'  => $result['product_id'],
 					'thumb'       => $image,
 					'name'        => $result['name'],
-					'qty'    	  => $result['quantity'],
-					'brand'        => $result['manufacturer'],
-					'review'        => $result['reviews'],
-					'description' => utf8_substr(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8')), 0, $this->config->get($this->config->get('config_theme') . '_product_description_length')) . '..',
+					'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
 					'price'       => $price,
-					'specialTime' => ($result['special_end']=='0000-00-00' || is_null($result['special_end'])) ? false : $result['special_end'],
 					'special'     => $special,
-					'percentsaving' => round((($result['price'] - $result['special'])/$result['price'])*100, 0),
 					'tax'         => $tax,
 					'rating'      => $rating,
-					'href'        => $this->url->link('product/product', 'product_id=' . $result['product_id']),
-					'quick'        => $this->url->link('product/quick_view','&product_id=' . $result['product_id']),
-					'thumb_swap'  => $this->model_tool_image->resize($images , $setting['width'], $setting['height'])
+					'href'        => $this->url->link('product/product', 'product_id=' . $result['product_id'])
 				);
-				
 			}
 
 			return $this->load->view('extension/module/special', $data);

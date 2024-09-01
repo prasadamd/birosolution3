@@ -1,6 +1,6 @@
 <?php
 
-$_['advertise_google_push_limit'] = 500; // No more than 1000
+$_['advertise_google_push_limit'] = 1000; // No more than 1000
 $_['advertise_google_report_limit'] = 1000; // No more than 1000
 $_['advertise_google_product_status_limit'] = 1000; // No more than 1000
 
@@ -121,51 +121,15 @@ $_['advertise_google_tax_usa_states'] = array(
 
 $_['advertise_google_google_product_categories'] = array(
     '0' => 'Other (Not on the list)',
-    '932' => 'Office Supplies > General Office Supplies',
-    '960' => 'Office Supplies > General Office Supplies > Labels & Tags',
-    '956' => 'Office Supplies > General Office Supplies > Paper Products',
-    '957' => 'Office Supplies > General Office Supplies > Business Cards',
     '1604' => 'Apparel & Accessories > Clothing',
-    '2306' => 'Apparel & Accessories > Clothing > Uniforms',
-    '167' => 'Apparel & Accessories > Clothing Accessories',
     '178' => 'Apparel & Accessories > Clothing Accessories > Sunglasses',
-    '5443' => 'Apparel & Accessories > Clothing Accessories > Bridal Accessories',
     '3032' => 'Apparel & Accessories > Handbags, Wallets & Cases > Handbags',
     '201' => 'Apparel & Accessories > Jewelry > Watches',
     '187' => 'Apparel & Accessories > Shoes',
-    '505419' => 'Arts & Entertainment > Hobbies & Creative Arts > Arts & Crafts > Art & Crafting Materials > Crafting Adhesives & Magnets > Decorative Tape',
-    '543654' => 'Arts & Entertainment > Party & Celebration & Creative Arts > Trophies & Awards > Award Ribbons',
-    '94' => 'Arts & Entertainment > Party & Celebration & Creative Arts > Gift Giving > Gift Wrapping',
-    '96' => 'Arts & Entertainment > Party & Celebration > Party Supplies',
-    '5452' => 'Arts & Entertainment > Party & Celebration > Party Supplies > Party Favors',
-    '2559' => 'Arts & Entertainment > Party & Celebration > Gift Giving',
-    '8213' => 'Arts & Entertainment > Party & Celebration > Gift Giving > Gift Wrapping > Gift Tags & Labels',
-    '5091' => 'Arts & Entertainment > Party & Celebration > Gift Giving > Gift Wrapping > Gift Boxes & Tins',
-    '596' => 'Home & Garden > Decor > Seasonal & Holiday Decorations',
-    '5991' => 'Home & Garden > Decor > Seasonal & Holiday Decorations > Holiday Stockings',
-    '3144' => 'Home & Garden > Decor > Seasonal & Holiday Decorations > Holiday Ornaments',
-    '5359' => 'Home & Garden > Decor > Seasonal & Holiday Decorations > Advent Calendars',
-    '499804' => 'Home & Garden > Decor > Seasonal & Holiday Decorations > Holiday Ornament Hooks',
-    '500044' => 'Home & Garden > Decor > Artwork > Posters, Prints, & Visual Artwork',
-    '5608' => 'Luggage & Bags > Shopping Totes',
     '784' => 'Media > Books',
     '839' => 'Media > DVDs & Videos',
     '855' => 'Media > Music & Sound Recordings',
-    '1279' => 'Software > Video Game Software',
-    '222' => 'Electronics',
-    '3356' => 'Electronics > Arcade Equipment',
-    '328' => 'Electronics > Computers > Laptops',
-    '325' => 'Electronics > Computers > Desktop Computers',
-    '4745' => 'Electronics > Computers > Tablet Computers',
-    '267' => 'Electronics > Communications > Telephony > Mobile Phones',
-    '2082' => 'Electronics > Electronics Accessories',
-    '279' => 'Electronics > Electronics Accessories > Computer Accessories',
-    '4224' => 'Electronics > Electronics Accessories > Computer Components > Laptop Parts',
-    '2414' => 'Electronics > Electronics Accessories > Computer Components > Storage Devices',
-    '5268' => 'Electronics > Electronics Accessories > Computer Components > Storage Devices > Disk Duplicators',
-    '376' => 'Electronics > Electronics Accessories > Computer Components > Storage Devices > Disk Duplicators > CD/DVD Duplicators',
-    '5271' => 'Electronics > Electronics Accessories > Computer Components > Storage Devices > Disk Duplicators > Hard Drive Duplicators',
-    '5112' => 'Electronics > Electronics Accessories > Computer Components > Storage Devices > Disk Duplicators > USB Drive Duplicators'
+    '1279' => 'Software > Video Game Software'
 );
 
 $_['advertise_google_size_systems'] = array('AU','BR','CN','DE','EU','FR','IT','JP','MEX','UK','US');
@@ -174,7 +138,7 @@ $_['advertise_google_reporting_intervals'] = array(
     'TODAY',
     'YESTERDAY',
     'LAST_7_DAYS',
-    'LAST_WEEK_MON_SUN',
+    'LAST_WEEK',
     'LAST_WEEK_SUN_SAT',
     'LAST_BUSINESS_WEEK',
     'LAST_14_DAYS',
@@ -200,10 +164,8 @@ $_['advertise_google_countries'] = array(
     'DK' => "Denmark",
     'FR' => "France",
     'DE' => "Germany",
-    'GR' => "Greece",
     'HK' => "Hong Kong",
     'IN' => "India",
-    'LK' => "Sri Lanka",
     'ID' => "Indonesia",
     'IE' => "Ireland",
     'IL' => "Israel",
@@ -215,18 +177,13 @@ $_['advertise_google_countries'] = array(
     'NZ' => "New Zealand",
     'NO' => "Norway",
     'PH' => "Philippines",
-    'HU' => "Hungary",
     'PL' => "Poland",
     'PT' => "Portugal",
     'RU' => "Russia",
-    'RO' => "Romania",
-    'EG' => "Egypt",
-    'KE' => "Kenya",
     'SA' => "Saudi Arabia",
     'SG' => "Singapore",
     'ZA' => "South Africa",
     'KR' => "South Korea",
-    'LB' => "Lebanon",
     'ES' => "Spain",
     'SE' => "Sweden",
     'CH' => "Switzerland",
@@ -234,13 +191,10 @@ $_['advertise_google_countries'] = array(
     'TH' => "Thailand",
     'TR' => "Turkey",
     'UA' => "Ukraine",
-    'UZ' => "Uzbekistan",
     'AE' => "United Arab Emirates",
     'GB' => "United Kingdom",
     'US' => "United States",
-    'VN' => "Vietnam",
-    'EE' => "Estonia",
-    'LT' => "Lithuania"
+    'VN' => "Vietnam"
 );
 
 // https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
@@ -267,7 +221,6 @@ $_['advertise_google_languages'] = array(
     'bh' => "Bihari languages",
     'bi' => "Bislama",
     'bs' => "Bosnian",
-    'si' => "Sinhala (Sinhalese)",
     'br' => "Breton",
     'bg' => "Bulgarian",
     'my' => "Burmese",
@@ -390,6 +343,7 @@ $_['advertise_google_languages'] = array(
     'sr' => "Serbian",
     'gd' => "Gaelic, Scottish Gaelic",
     'sn' => "Shona",
+    'si' => "Sinhala, Sinhalese",
     'sk' => "Slovak",
     'sl' => "Slovenian",
     'so' => "Somali",
@@ -633,11 +587,6 @@ $_['advertise_google_targets'] = array(
         'currencies' => array('CAD')
     ),
     array(
-        'country' => 'KE',
-        'languages' => array('en', 'sw'),
-        'currencies' => array('KES')
-    ),
-    array(
         'country' => 'CL',
         'languages' => array('es'),
         'currencies' => array('CLP')
@@ -676,21 +625,6 @@ $_['advertise_google_targets'] = array(
         'country' => 'IN',
         'languages' => array('en'),
         'currencies' => array('INR')
-    ),
-    array(
-        'country' => 'GR',
-        'languages' => array('el', 'en'),
-        'currencies' => array('EUR')
-    ),
-    array(
-        'country' => 'RO',
-        'languages' => array('ro', 'en'),
-        'currencies' => array('RON', 'EUR')
-    ),
-    array(
-        'country' => 'LK',
-        'languages' => array('si', 'en'),
-        'currencies' => array('LKR')
     ),
     array(
         'country' => 'ID',
@@ -748,19 +682,9 @@ $_['advertise_google_targets'] = array(
         'currencies' => array('PHP')
     ),
     array(
-        'country' => 'HU',
-        'languages' => array('hu'),
-        'currencies' => array('HUF', 'EUR')
-    ),
-    array(
         'country' => 'PL',
         'languages' => array('pl'),
-        'currencies' => array('PLN', 'EUR')
-    ),
-    array(
-        'country' => 'LB',
-        'languages' => array('lb', 'ar', 'en', 'fr', 'tr'),
-        'currencies' => array('LBP', 'EUR', 'USD')
+        'currencies' => array('PLN')
     ),
     array(
         'country' => 'PT',
@@ -771,11 +695,6 @@ $_['advertise_google_targets'] = array(
         'country' => 'RU',
         'languages' => array('ru'),
         'currencies' => array('RUB')
-    ),
-    array(
-        'country' => 'EG',
-        'languages' => array('ar', 'en'),
-        'currencies' => array('EGP')
     ),
     array(
         'country' => 'SA',
@@ -796,11 +715,6 @@ $_['advertise_google_targets'] = array(
         'country' => 'KR',
         'languages' => array('ko', 'en'),
         'currencies' => array('KRW')
-    ),
-    array(
-        'country' => 'LT',
-        'languages' => array('en', 'ru', 'lt'),
-        'currencies' => array('EUR')
     ),
     array(
         'country' => 'ES',
@@ -834,7 +748,7 @@ $_['advertise_google_targets'] = array(
     ),
     array(
         'country' => 'UA',
-        'languages' => array('en', 'uk', 'ru'),
+        'languages' => array('uk', 'ru'),
         'currencies' => array('UAH')
     ),
     array(
@@ -851,11 +765,6 @@ $_['advertise_google_targets'] = array(
         'country' => 'US',
         'languages' => array('en', 'es', 'zh'),
         'currencies' => array('USD')
-    ),
-    array(
-        'country' => 'UZ',
-        'languages' => array('en', 'uz', 'ru'),
-        'currencies' => array('UZS')
     ),
     array(
         'country' => 'VN',

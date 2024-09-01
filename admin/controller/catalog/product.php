@@ -268,7 +268,7 @@ class ControllerCatalogProduct extends Controller {
 		}
 
 		if (isset($this->request->get['page'])) {
-			$page = $this->request->get['page'];
+			$page = (int)$this->request->get['page'];
 		} else {
 			$page = 1;
 		}
@@ -335,12 +335,11 @@ class ControllerCatalogProduct extends Controller {
 
 		$this->load->model('tool/image');
 
-
 		$product_total = $this->model_catalog_product->getTotalProducts($filter_data);
 
 		$results = $this->model_catalog_product->getProducts($filter_data);
 
-foreach ($results as $result) {
+		foreach ($results as $result) {
 			if (is_file(DIR_IMAGE . $result['image'])) {
 				$image = $this->model_tool_image->resize($result['image'], 40, 40);
 			} else {
@@ -348,14 +347,8 @@ foreach ($results as $result) {
 			}
 
 			$special = false;
-			 $product_id = $result['product_id'];
-
 
 			$product_specials = $this->model_catalog_product->getProductSpecials($result['product_id']);
-        	$product_options = $this->model_catalog_product->getProductOptions($product_id);
-  
-  
-  
 
 			foreach ($product_specials  as $product_special) {
 				if (($product_special['date_start'] == '0000-00-00' || strtotime($product_special['date_start']) < time()) && ($product_special['date_end'] == '0000-00-00' || strtotime($product_special['date_end']) > time())) {
@@ -374,8 +367,7 @@ foreach ($results as $result) {
 				'special'    => $special,
 				'quantity'   => $result['quantity'],
 				'status'     => $result['status'] ? $this->language->get('text_enabled') : $this->language->get('text_disabled'),
-				'edit'       => $this->url->link('catalog/product/edit', 'user_token=' . $this->session->data['user_token'] . '&product_id=' . $result['product_id'] . $url, true),
-				'options'    => $product_options // Add this line to include the options
+				'edit'       => $this->url->link('catalog/product/edit', 'user_token=' . $this->session->data['user_token'] . '&product_id=' . $result['product_id'] . $url, true)
 			);
 		}
 
@@ -668,12 +660,12 @@ foreach ($results as $result) {
 		$this->load->model('setting/store');
 
 		$data['stores'] = array();
-		
+
 		$data['stores'][] = array(
 			'store_id' => 0,
 			'name'     => $this->language->get('text_default')
 		);
-		
+
 		$stores = $this->model_setting_store->getStores();
 
 		foreach ($stores as $store) {
@@ -770,13 +762,6 @@ foreach ($results as $result) {
 		} else {
 			$data['sort_order'] = 1;
 		}
-			if ($product_info['quantity'] <= 0) {
-				$data['stock'] = $product_info['stock_status'];
-			} elseif ($this->config->get('config_stock_display')) {
-				$data['stock'] = $product_info['quantity'];
-			} else {
-				$data['stock'] = $this->language->get('text_instock');
-			}
 
 		$this->load->model('localisation/stock_status');
 
@@ -1049,7 +1034,7 @@ foreach ($results as $result) {
 				'date_end'          => ($product_special['date_end'] != '0000-00-00') ? $product_special['date_end'] :  ''
 			);
 		}
-		
+
 		// Image
 		if (isset($this->request->post['image'])) {
 			$data['image'] = $this->request->post['image'];
@@ -1178,7 +1163,7 @@ foreach ($results as $result) {
 		$this->load->model('design/layout');
 
 		$data['layouts'] = $this->model_design_layout->getLayouts();
-		
+
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -1207,20 +1192,20 @@ foreach ($results as $result) {
 
 		if ($this->request->post['product_seo_url']) {
 			$this->load->model('design/seo_url');
-			
+
 			foreach ($this->request->post['product_seo_url'] as $store_id => $language) {
 				foreach ($language as $language_id => $keyword) {
 					if (!empty($keyword)) {
 						if (count(array_keys($language, $keyword)) > 1) {
 							$this->error['keyword'][$store_id][$language_id] = $this->language->get('error_unique');
-						}						
-						
+						}
+
 						$seo_urls = $this->model_design_seo_url->getSeoUrlsByKeyword($keyword);
-						
+
 						foreach ($seo_urls as $seo_url) {
 							if (($seo_url['store_id'] == $store_id) && (!isset($this->request->get['product_id']) || (($seo_url['query'] != 'product_id=' . $this->request->get['product_id'])))) {
 								$this->error['keyword'][$store_id][$language_id] = $this->language->get('error_keyword');
-								
+
 								break;
 							}
 						}
@@ -1272,7 +1257,7 @@ foreach ($results as $result) {
 			}
 
 			if (isset($this->request->get['limit'])) {
-				$limit = $this->request->get['limit'];
+				$limit = (int)$this->request->get['limit'];
 			} else {
 				$limit = 5;
 			}

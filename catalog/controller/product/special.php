@@ -20,7 +20,7 @@ class ControllerProductSpecial extends Controller {
 		}
 
 		if (isset($this->request->get['page'])) {
-			$page = $this->request->get['page'];
+			$page = (int)$this->request->get['page'];
 		} else {
 			$page = 1;
 		}
@@ -28,8 +28,7 @@ class ControllerProductSpecial extends Controller {
 		if (isset($this->request->get['limit'])) {
 			$limit = (int)$this->request->get['limit'];
 		} else {
-	
-			$limit = 16;
+			$limit = $this->config->get('theme_' . $this->config->get('config_theme') . '_product_limit');
 		}
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -87,32 +86,23 @@ class ControllerProductSpecial extends Controller {
 			} else {
 				$image = $this->model_tool_image->resize('placeholder.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'));
 			}
-			//added for image swap
-				
-			$images = $this->model_catalog_product->getProductImages($result['product_id']);
-	
-			if(isset($images[0]['image']) && !empty($images)){
-			$images = $images[0]['image']; 
-			}else
-			{
-			$images = $image;
-			}
-						
-		
+
 			if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
 				$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 			} else {
 				$price = false;
 			}
 
-			if ((float)$result['special']) {
+			if (!is_null($result['special']) && (float)$result['special'] >= 0) {
 				$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+				$tax_price = (float)$result['special'];
 			} else {
 				$special = false;
+				$tax_price = (float)$result['price'];
 			}
 
 			if ($this->config->get('config_tax')) {
-				$tax = $this->currency->format((float)$result['special'] ? $result['special'] : $result['price'], $this->session->data['currency']);
+				$tax = $this->currency->format($tax_price, $this->session->data['currency']);
 			} else {
 				$tax = false;
 			}
@@ -127,20 +117,13 @@ class ControllerProductSpecial extends Controller {
 				'product_id'  => $result['product_id'],
 				'thumb'       => $image,
 				'name'        => $result['name'],
-				'qty'    	  => $result['quantity'],
-				'brand'        => $result['manufacturer'],
-				'review'        => $result['reviews'],
 				'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
 				'price'       => $price,
 				'special'     => $special,
 				'tax'         => $tax,
 				'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
 				'rating'      => $result['rating'],
-				'href'        => $this->url->link('product/product', 'product_id=' . $result['product_id'] . $url),
-				'quick'        => $this->url->link('product/quick_view','&product_id=' . $result['product_id']),
-				'percentsaving' 	 => round((( $result['price'] -  $result['special'])/ $result['price'])*100, 0),
-				'thumb_swap'  => $this->model_tool_image->resize($images, $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), 
-				$this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height')),
+				'href'        => $this->url->link('product/product', 'product_id=' . $result['product_id'] . $url)
 			);
 		}
 
@@ -220,9 +203,7 @@ class ControllerProductSpecial extends Controller {
 
 		$data['limits'] = array();
 
-// 		$limits = array_unique(array($this->config->get('theme_' . $this->config->get('config_theme') . '_product_limit'), 25, 50, 75, 100));
-		$product_limit = $this->config->get('theme_' . $this->config->get('config_theme') . '_product_limit');
-    $limits = array_unique(array(16, 25, 50, 75, 100));//Limita de afisare a produselor
+		$limits = array_unique(array($this->config->get('theme_' . $this->config->get('config_theme') . '_product_limit'), 25, 50, 75, 100));
 
 		sort($limits);
 
