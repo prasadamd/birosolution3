@@ -15,18 +15,6 @@ $_['text_content_top']    = 'Content Top';
 $_['text_content_bottom'] = 'Content Bottom';
 $_['text_column_left']    = 'Column Left';
 $_['text_column_right']   = 'Column Right';
-$_['text_headerleft']    = 'Header Left';
-$_['text_footertop']    = 'Footer Top';
-$_['text_footerbottom']    = 'Footer Bottom';
-$_['text_footerleft']    = 'Footer Left';
-$_['text_headertop']    = 'Header Top';
-$_['text_footerright']    = 'Footer Right';
-$_['text_headertopleft']    = 'Header Top Left';
-$_['text_productblock']    = 'Product Tab Block';
-$_['text_bannerfirst']    = 'Module Banner First';
-$_['text_bannersecond']    = 'Module Banner Second';
-$_['text_bannerthird']    = 'Module Banner Third';
-$_['text_discountcode']    = 'Module Discount Code';
 
 // Column
 $_['column_name']         = 'Layout Name';

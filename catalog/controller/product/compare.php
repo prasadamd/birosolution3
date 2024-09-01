@@ -12,11 +12,8 @@ class ControllerProductCompare extends Controller {
 		}
 
 		if (isset($this->request->get['remove'])) {
-			$key = array_search(trim($this->request->get['remove']), $this->session->data['compare']);
-			// fix
-			$a = array_flip($this->session->data['compare']);
-			$key = $a[$this->request->get['remove'].' '];
-			
+			$key = array_search($this->request->get['remove'], $this->session->data['compare']);
+
 			if ($key !== false) {
 				unset($this->session->data['compare'][$key]);
 

@@ -215,8 +215,7 @@ class ControllerCheckoutCart extends Controller {
 
 			$data['continue'] = $this->url->link('common/home');
 
-// 	$data['checkout'] = $this->url->link('checkout/checkout', '', true); old version
-			$data['checkout'] = $this->url->link('extension/module/custom', '', true);
+			$data['checkout'] = $this->url->link('checkout/checkout', '', true);
 
 			$this->load->model('setting/extension');
 
@@ -401,7 +400,6 @@ class ControllerCheckoutCart extends Controller {
 			unset($this->session->data['reward']);
 
 			$this->response->redirect($this->url->link('checkout/cart'));
-	
 		}
 
 		$this->response->addHeader('Content-Type: application/json');
@@ -410,7 +408,6 @@ class ControllerCheckoutCart extends Controller {
 
 	public function remove() {
 		$this->load->language('checkout/cart');
-		
 
 		$json = array();
 

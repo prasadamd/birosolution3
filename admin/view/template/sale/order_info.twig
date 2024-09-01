@@ -2,12 +2,7 @@
 <div id="content">
   <div class="page-header">
     <div class="container-fluid">
-         {#<button type="submit" id="button-invoiceMail" form="form-order" formaction="{{ invoiceMail }}" formtarget="_blank" data-toggle="tooltip" title="Mails" class="btn btn-info"><i class="fa fa-envelope"></i></button>#}
-   
-      <div class="pull-right">
-            <a href="{{ invoiceMail }}" target="_blank" data-toggle="tooltip" title="{{ button_invoice_print }}" class="btn btn-info"><i class="fa fa-envelope"></i></a>
-          <a href="{{ invoice }}" target="_blank" data-toggle="tooltip" title="{{ button_invoice_print }}" class="btn btn-info"><i class="fa fa-print"></i></a>
-          <a href="{{ shipping }}" target="_blank" data-toggle="tooltip" title="{{ button_shipping_print }}" class="btn btn-info"><i class="fa fa-truck"></i></a> <a href="{{ edit }}" data-toggle="tooltip" title="{{ button_edit }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a> <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <div class="pull-right"><a href="{{ invoice }}" target="_blank" data-toggle="tooltip" title="{{ button_invoice_print }}" class="btn btn-info"><i class="fa fa-print"></i></a> <a href="{{ shipping }}" target="_blank" data-toggle="tooltip" title="{{ button_shipping_print }}" class="btn btn-info"><i class="fa fa-truck"></i></a> <a href="{{ edit }}" data-toggle="tooltip" title="{{ button_edit }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a> <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
       <h1>{{ heading_title }}</h1>
       <ul class="breadcrumb">
         {% for breadcrumb in breadcrumbs %}
@@ -151,8 +146,7 @@
             <tr>
               <td class="text-left">{{ column_product }}</td>
               <td class="text-left">{{ column_model }}</td>
-               <td class="text-right">{{ column_quantity }}</td>
-              <td class="text-right">Stock</td>
+              <td class="text-right">{{ column_quantity }}</td>
               <td class="text-right">{{ column_price }}</td>
               <td class="text-right">{{ column_total }}</td>
             </tr>
@@ -161,52 +155,15 @@
           
           {% for product in products %}
           <tr>
-            <td class="text-left"><a href="{{ product.href }}">{{ product.name }}</a>
-      
-            {% for option in product.option %} <br />
+            <td class="text-left"><a href="{{ product.href }}">{{ product.name }}</a> {% for option in product.option %} <br />
               {% if option.type != 'file' %}
-              &nbsp;<small> - {{ option.name }}: {{ option.value }}   </small>
-           
-              {% else %}
+              &nbsp;<small> - {{ option.name }}: {{ option.value }}</small> {% else %}
               &nbsp;<small> - {{ option.name }}: <a href="{{ option.href }}">{{ option.value }}</a></small> {% endif %}
-
-              {% endfor %}
-
-          
-              </td>
-            <td class="text-left">{{ product.model }} </td>
-            <td class="text-right">{{ product.quantity }} </td>
-      <td class="text-right">
-          
-    {% set showTotalStock = true %}
-
-    {% for option in product.option %}
-        {% if option.type != 'file' %}
-            &nbsp;<small></small>
-        {% else %}
-            &nbsp;<small> -</small>
-        {% endif %}
-        
-        {% for optionV in product.optionV %}
-            {% for option_value in optionV.product_option_value %}
-                {% if option_value.product_option_value_id == option.option_id %}
-                    <span id="OptionStock">{{ option_value.quantity }}</span>
-
-                    {% if option_value.quantity > 0 %}
-                        {% set showTotalStock = false %}
-                    {% endif %}
-                {% endif %}
-            {% endfor %}
-        {% endfor %}
-    {% endfor %}
-    
-    {% if showTotalStock %}
-        <span id="TotalStock">{{ product.stock_quantity }}</span>
-    {% endif %}
-</td>
-
+              {% endfor %}</td>
+            <td class="text-left">{{ product.model }}</td>
+            <td class="text-right">{{ product.quantity }}</td>
             <td class="text-right">{{ product.price }}</td>
-            <td clas s="text-right">{{ product.total }}</td>
+            <td class="text-right">{{ product.total }}</td>
           </tr>
           {% endfor %}
           {% for voucher in vouchers %}
@@ -214,64 +171,18 @@
             <td class="text-left"><a href="{{ voucher.href }}">{{ voucher.description }}</a></td>
             <td class="text-left"></td>
             <td class="text-right">1</td>
-          
             <td class="text-right">{{ voucher.amount }}</td>
             <td class="text-right">{{ voucher.amount }}</td>
           </tr>
           {% endfor %}
-         {% for total in totals %}
-  {% if loop.index0 != 1 %}
-    <tr>
-      <td colspan="4" class="text-right">{{ total.title }}</td>
-      <td class="text-right">{{ total.text }}</td>
-    </tr>
-  {% endif %}
-{% endfor %}
-
+          {% for total in totals %}
+          <tr>
+            <td colspan="4" class="text-right">{{ total.title }}</td>
+            <td class="text-right">{{ total.text }}</td>
+          </tr>
+          {% endfor %}
             </tbody>
           
-        </table>
-
-        <table class="table table-bordered">
-          <thead>
-          <tr>
-            <td>Produs</td>
-            <td>Preț Cumpărare</td>
-            <td>Preț Vânzare</td>
-            <td>Cantitate</td>
-            <td>Total Cumparare</td>
-            <td>Total Vânzare</td>
-            <td>Profit</td>
-          </tr>
-          </thead>
-          <tbody>
-          {% set total_profit = 0 %}
-          {% set total_cumparare = 0 %}
-          {% set total_vanzare = 0 %}
-          {% for product in products %}
-            <tr>
-              <td>{{ product.name }}</td>
-              <td>{{ product.weight | number_format(2, '.', '') }}</td>
-              <td>{{ product.price_ | number_format(2, '.', '') }}</td>
-              <td>{{ product.quantity }}</td>
-              <td>{{ (product.weight * product.quantity) | number_format(2, '.', '') }}</td>
-              <td>{{ (product.price_ * product.quantity) | number_format(2, '.', '') }}</td>
-              <td>{{ ((product.price_ * product.quantity) - (product.weight * product.quantity)) | number_format(2, '.', '') }}</td>
-            </tr>
-            {% set total_profit = total_profit + ((product.price_ * product.quantity) - (product.weight * product.quantity)) %}
-            {% set total_cumparare = total_cumparare + (product.weight * product.quantity) %}
-            {% set total_vanzare = total_vanzare + (product.price_ * product.quantity) %}
-          {% endfor %}
-          </tbody>
-          <tfoot>
-          <tr>
-            <td colspan="3"><b>Total Profit</b></td>
-            <td></td>
-            <td><b>{{ total_cumparare | number_format(2, '.', '') }}</b></td>
-            <td><b>{{ total_vanzare | number_format(2, '.', '') }}</b></td>
-            <td><b>{{ total_profit | number_format(2, '.', '') }}</b></td>
-          </tr>
-          </tfoot>
         </table>
         {% if comment %}
         <table class="table table-bordered">
@@ -287,8 +198,6 @@
           </tbody>
         </table>
         {% endif %} </div>
-
-
     </div>
     <div class="panel panel-default">
       <div class="panel-heading">
