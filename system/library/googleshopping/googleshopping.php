@@ -825,6 +825,8 @@ class Googleshopping extends Library {
                             $product_level_entries[$product_id]['destination_status'] = 'disapproved';
                         break;
                     }
+                } else {
+                    $report['status'] = $statuses[html_entity_decode($report['campaign_name'])];
                 }
             }
 

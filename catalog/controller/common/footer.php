@@ -52,6 +52,22 @@ class ControllerCommonFooter extends Controller {
 		}
 		//End Manufacure
 
+		// Manufacture
+
+		$this->load->model('catalog/manufacturer');
+		
+		$data['manufacturer_list'] = array();
+		
+		$manufacturers = $this->model_catalog_manufacturer->getManufacturers();
+		
+		foreach ($manufacturers as $manufacturer_list) {
+			$data['manufacturer_list'][] = array(
+				'name' => $manufacturer_list['name'],
+				'href' => $this->url->link('product/manufacturer/info', 'manufacturer_id=' . $manufacturer_list['manufacturer_id'])
+			);
+		}
+		//End Manufacure
+
 		// Whos Online
 		if ($this->config->get('config_customer_online')) {
 			$this->load->model('tool/online');

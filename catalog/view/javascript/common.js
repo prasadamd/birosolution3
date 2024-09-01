@@ -233,12 +233,6 @@ var voucher = {
 			type: 'post',
 			data: 'key=' + key,
 			dataType: 'json',
-			beforeSend: function() {
-				$('#cart > button').button('loading');
-			},
-			complete: function() {
-				$('#cart > button').button('reset');
-			},
 			success: function(json) {
 				$('#cart-total').html(json['total']);
 

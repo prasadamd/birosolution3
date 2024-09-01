@@ -9,6 +9,11 @@
 <script type="text/javascript" src="view/javascript/bootstrap/js/bootstrap.min.js"></script>
 <link href="view/javascript/font-awesome/css/font-awesome.min.css" type="text/css" rel="stylesheet" />
 <link type="text/css" href="view/stylesheet/stylesheet.css" rel="stylesheet" media="all" />
+<style>
+  .page-break { 
+    page-break-after: always; 
+  }
+</style>
 </head>
 <body>
 <div class="container">
@@ -69,6 +74,7 @@
           <td><b>{{ column_product }}</b></td>
           <td><b>{{ column_model }}</b></td>
           <td class="text-right"><b>{{ column_quantity }}</b></td>
+            <td class="text-right"><b>Stock</b></td>
           <td class="text-right"><b>{{ column_price }}</b></td>
           <td class="text-right"><b>{{ column_total }}</b></td>
         </tr>
@@ -83,6 +89,33 @@
             {% endfor %}</td>
           <td>{{ product.model }}</td>
           <td class="text-right">{{ product.quantity }}</td>
+  <td class="text-right">
+    {% set showTotalStock = true %}
+
+    {% for option in product.option %}
+        {% if option.type != 'file' %}
+            &nbsp;<small></small>
+        {% else %}
+            &nbsp;<small> -</small>
+        {% endif %}
+        
+        {% for optionV in product.optionV %}
+            {% for option_value in optionV.product_option_value %}
+                {% if option_value.product_option_value_id == option.option_id %}
+                    <span id="OptionStock">{{ option_value.quantity }}</span>
+
+                    {% if option_value.quantity > 0 %}
+                        {% set showTotalStock = false %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    {% endfor %}
+    
+    {% if showTotalStock %}
+        <span id="TotalStock">{{ product.stock_quantity }}</span>
+    {% endif %}
+</td>
           <td class="text-right">{{ product.price }}</td>
           <td class="text-right">{{ product.total }}</td>
         </tr>
@@ -96,12 +129,15 @@
           <td class="text-right">{{ voucher.amount }}</td>
         </tr>
         {% endfor %}
-        {% for total in order.total %}
-        <tr>
-          <td class="text-right" colspan="4"><b>{{ total.title }}</b></td>
-          <td class="text-right">{{ total.text }}</td>
-        </tr>
-        {% endfor %}
+{% for total in order.total %}
+  {% if loop.index0 != 1 %}
+    <tr>
+      <td class="text-right" colspan="4"><b>{{ total.title }}</b></td>
+      <td class="text-right">{{ total.text }}</td>
+    </tr>
+  {% endif %}
+{% endfor %}
+
       </tbody>
     </table>
     {% if order.comment %}
@@ -119,6 +155,9 @@
     </table>
     {% endif %}
   </div>
+  {% if not loop.last %}
+  <div class="page-break"></div>
+  {% endif %}
   {% endfor %}
 </div>
 </body>
